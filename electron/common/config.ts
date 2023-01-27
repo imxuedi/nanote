@@ -17,5 +17,5 @@ export const getWindowSize = (name: 'small' | 'medium'): WindowSize => {
 }
 
 export const closeAsHidden = () => {
-    return false
+    return true
 }

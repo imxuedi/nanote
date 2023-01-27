@@ -20,7 +20,7 @@ import {createTray} from "./tray";
 process.env.DIST_ELECTRON = join(__dirname, '..')
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist')
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
-    ? join(process.env.DIST_ELECTRON, '../assets')
+    ? join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST
 
 // Disable GPU Acceleration for Windows 7
@@ -161,14 +161,32 @@ export const ui_direct_close = () => {
     win.close()
 }
 
-export const ui_window_open = () => {
+export const ui_window_open = (): boolean => {
     return win.isVisible()
 }
 
+export const ui_window_show = () => {
+    if (!win) return
+    if (win.isMinimized()) {
+        win.restore()
+    }
+    win.show()
+    win.focus()
+}
+
+export const ui_window_focused = (): boolean => {
+    if (!win) return
+    return win.isFocused()
+}
+// 创建托盘图标
 if (config.closeAsHidden()) {
-    createTray({
-        ui_toggle_minimize,
-        ui_toggle_close
+    app.whenReady().then(() => {
+        createTray({
+            ui_window_show,
+            ui_toggle_close,
+            ui_window_open,
+            // win
+        })
     })
 }
 
