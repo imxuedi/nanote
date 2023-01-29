@@ -57,7 +57,7 @@ async function createWindow() {
         maximizable: false,
         useContentSize: true,
 
-        icon: join(process.env.PUBLIC, 'favicon.ico'),
+        icon: join(process.env.PUBLIC, 'favicon.png'),
         webPreferences: {
             // 预加载脚本
             preload,

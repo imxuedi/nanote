@@ -4,7 +4,7 @@ import {join} from "node:path";
 let tray = null
 export const createTray = (core) => {
     // 开发时静态文件放在最外层的 public 目录下
-    const path = join(__dirname, "../../public/notes.png")
+    const path = join(__dirname, "../../public/favicon.png")
     const icon = nativeImage.createFromPath(path)
     tray = new Tray(icon)
     const contextMenu = Menu.buildFromTemplate([

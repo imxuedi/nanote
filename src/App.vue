@@ -56,7 +56,7 @@ const curTab = ref('Bookmark')
 }
 
 .top-search-bar {
-  background-color: #fff;
+  background-color: #ffffff;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -64,5 +64,6 @@ const curTab = ref('Bookmark')
   -webkit-app-region: drag;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  box-shadow: 1px 0 1px 1px #ddd;
 }
 </style>

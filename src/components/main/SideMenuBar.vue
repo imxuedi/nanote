@@ -52,6 +52,9 @@ const bindClass = computed(() => {
     line-height: 50px;
     text-align: center;
     width: 100%;
+    font-weight: bold;
+    color: #999;
+    font-size: 14px;
   }
 }
 
