@@ -47,12 +47,13 @@ const curTab = ref('Bookmark')
 
 .side-menu-bar, .right {
   display: inline-block;
-  height: 100vh;
+  height: 98vh;
 }
 
 .right {
   width: calc(100% - 70px);
   vertical-align: top;
+  background-color: #ffffff;
 }
 
 .top-search-bar {
@@ -64,6 +65,6 @@ const curTab = ref('Bookmark')
   -webkit-app-region: drag;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  box-shadow: 1px 0 1px 1px #ddd;
+  box-shadow: 0 2px 8px -2px #ddd;
 }
 </style>

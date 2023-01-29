@@ -27,7 +27,7 @@
       <component :is="Views[curView]"></component>
     </div>
     <div class="info">
-      <span>{{info}}</span>
+      <span>{{ info }}</span>
     </div>
   </div>
 </template>
@@ -63,7 +63,7 @@ const chosenList = []
   }
 
   .na-data {
-    height: calc(100vh - 140px);
+    height: calc(100vh - 165px);
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -138,11 +138,11 @@ const chosenList = []
 }
 
 .info {
-  box-shadow: 1px 0 1px 1px #ddd;
+  border-top: 1px solid #dddddd;
   position: fixed;
-  bottom: 0;
+  bottom: 5px;
   right: 0;
-  left: 70px;
+  left: 75px;
   padding: 10px;
   font-size: 12px;
   color: #666;

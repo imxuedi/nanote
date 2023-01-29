@@ -7,8 +7,10 @@
 }
 
 #app {
-    background-color: #ffffff;
+    /*background-color: #ffffff;*/
     border-radius: 5px;
+    margin: 5px;
+    box-shadow: 0 0 8px -3px #000
 }
 
 ::-webkit-scrollbar {
