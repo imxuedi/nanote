@@ -16,6 +16,7 @@
       :show="contextMenu.visible.value"
       :on-clickoutside="contextMenuHandler.hide"
       @select="contextMenuHandler.select"
+      :render-label="contextMenu.labelRenderer"
   />
 </template>
 
@@ -23,6 +24,8 @@
 import {computed, nextTick, ref, h} from "vue";
 import {NDataTable, NDropdown} from "naive-ui";
 import NaSvg from "@/components/main/NaSvg.vue";
+
+// ------------------------ data definition ------------------------
 
 const tableData = {
   columns: [
@@ -101,7 +104,8 @@ const focusHandler = () => {
   currentObj.value.id = ''
 }
 
-// 右键菜单
+// --------------------------- context menu -------------------------
+
 const contextMenu = {
   visible: ref(false),
   // 文件夹 | 书签 | 空白区域
@@ -115,7 +119,7 @@ const contextMenu = {
       ]
     } else if (contextMenu.awakeLoc.value === 'folder') {
       return [
-        {label: '新建书签', key: 'new-tag'},
+        {label: '打开', key: 'open'},
         {label: '重命名', key: 'rename'},
         {label: '移动到…', key: 'move'},
         {label: '删除', key: 'remove'},
@@ -131,7 +135,13 @@ const contextMenu = {
     }
   }),
   x: ref(0),
-  y: ref(0)
+  y: ref(0),
+  labelRenderer: (item) => {
+    if (item.key === 'open') {
+      return h('span', {style: {fontWeight: 'bold'}}, item.label)
+    }
+    return h('span', null, item.label)
+  }
 }
 
 // 右键菜单事件回调

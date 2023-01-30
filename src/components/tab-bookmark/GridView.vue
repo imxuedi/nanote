@@ -25,11 +25,12 @@
       :show="contextMenu.visible.value"
       :on-clickoutside="contextMenuHandler.hide"
       @select="contextMenuHandler.select"
+      :render-label="contextMenu.labelRenderer"
   />
 </template>
 
 <script setup>
-import {ref, computed, nextTick} from 'vue'
+import {ref, computed, nextTick, h} from 'vue'
 import {NEllipsis, NDropdown} from 'naive-ui'
 
 const data = ref([
@@ -82,7 +83,7 @@ const contextMenu = {
       ]
     } else if (contextMenu.awakeLoc.value === 'folder') {
       return [
-        {label: '新建书签', key: 'new-tag'},
+        {label: '打开', key: 'open'},
         {label: '重命名', key: 'rename'},
         {label: '移动到…', key: 'move'},
         {label: '删除', key: 'remove'},
@@ -98,7 +99,13 @@ const contextMenu = {
     }
   }),
   x: ref(0),
-  y: ref(0)
+  y: ref(0),
+  labelRenderer: (item) => {
+    if (item.key === 'open') {
+      return h('span', {style: {fontWeight: 'bold'}}, item.label)
+    }
+    return h('span', null, item.label)
+  }
 }
 
 // 右键菜单事件回调

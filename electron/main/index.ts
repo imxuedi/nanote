@@ -3,17 +3,16 @@ import * as config from '../common/config'
 import {release} from 'node:os'
 import {join} from 'node:path'
 import {createTray} from "./tray";
-
-// IPC 事件处理器
-// import './message'
+import '../common/web-server.js'
+import '../common/open-item.js'
 
 // The built directory structure
 //
 // ├─┬ dist-electron
 // │ ├─┬ main
-// │ │ └── index.js    > Electron-Main
+// │ │ └── index.ts    > Electron-Main
 // │ └─┬ preload
-// │   └── index.js    > Preload-Scripts
+// │   └── index.ts    > Preload-Scripts
 // ├─┬ dist
 // │ └── index.html    > Electron-Renderer
 //
@@ -116,6 +115,7 @@ app.on('activate', () => {
     }
 })
 
+
 // ----------------------------- UI 设置 --------------------------------------
 
 /**
@@ -189,5 +189,3 @@ if (config.closeAsHidden()) {
         })
     })
 }
-
-// ----------------------------- IPC Main -------------------------------------
