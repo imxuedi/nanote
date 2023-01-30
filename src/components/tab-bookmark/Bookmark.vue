@@ -34,11 +34,11 @@
 
 <script setup>
 import {ref, computed} from "vue";
-import {NBreadcrumb, NBreadcrumbItem, NInputGroup, NButton} from 'naive-ui'
+import {NBreadcrumb, NBreadcrumbItem} from 'naive-ui'
 import GridView from "@/components/tab-bookmark/GridView.vue";
 import ListView from "@/components/tab-bookmark/ListView.vue";
 
-const curView = ref('grid')
+const curView = ref('list')
 const Views = {grid: GridView, list: ListView}
 const changeView = (viewName) => {
   curView.value = viewName

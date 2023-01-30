@@ -89,6 +89,7 @@ const contextMenu = {
       ]
     } else if (contextMenu.awakeLoc.value === 'tag') {
       return [
+        {label: '打开浏览器', key: 'preview'},
         {label: '重命名', key: 'rename'},
         {label: '编辑', key: 'edit'},
         {label: '移动到…', key: 'move'},
@@ -130,6 +131,8 @@ const contextMenuHandler = {
 }
 </script>
 
+// TODO 快捷键绑定
+// Delete键 方向键 Home End 键 .etc
 <style lang="scss" scoped>
 .grid-view {
   display: grid;
