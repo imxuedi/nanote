@@ -2,15 +2,14 @@
   <div class="na-container">
     <div class="na-action">
       <div class="btn-group">
-        <svg height="40%" viewBox="0 0 1024 1024">
+        <svg height="40%" viewBox="0 0 1024 1024" @click="backFolder">
           <use xlink:href="#icon-back"></use>
         </svg>
         <div>
           <n-breadcrumb>
-            <n-breadcrumb-item>北京总行</n-breadcrumb-item>
-            <n-breadcrumb-item>天津分行</n-breadcrumb-item>
-            <n-breadcrumb-item>平山道支行</n-breadcrumb-item>
-            <n-breadcrumb-item>平山道支行</n-breadcrumb-item>
+            <n-breadcrumb-item v-for="(item, index) of rendererData.folders" :key="index">
+              <span @click="backFolder(index)"> {{ item.title }} </span>
+            </n-breadcrumb-item>
           </n-breadcrumb>
         </div>
       </div>
@@ -24,7 +23,11 @@
       </div>
     </div>
     <div class="na-data">
-      <component :is="Views[curView]"></component>
+      <component
+          :is="Views[curView]"
+          :data="rendererData.data"
+          @enter:folder="enterFolder"
+      />
     </div>
     <div class="info">
       <span>{{ info }}</span>
@@ -33,7 +36,7 @@
 </template>
 
 <script setup>
-import {ref, computed} from "vue";
+import {ref, computed, onMounted} from "vue";
 import {NBreadcrumb, NBreadcrumbItem} from 'naive-ui'
 import GridView from "@/components/tab-bookmark/GridView.vue";
 import ListView from "@/components/tab-bookmark/ListView.vue";
@@ -49,7 +52,45 @@ const info = computed(() => {
   // return '包含 10 个书签，上次修改 2023/1/29'
 })
 
-const chosenList = []
+const rendererData = ref({
+  folders: [{title: '根目录', path: '$'}],
+  data: []
+})
+
+const fetchRendererData = async (path) => {
+  const res = await IPC_API.takeSpecialData({
+    db: 'bookmark', path, excludes: ['subdir']
+  })
+  // console.log({path, res})
+  rendererData.value.data = res.map((item, index) => ({id: index, ...item}))
+}
+
+const enterFolder = async (index) => {
+  let folders = rendererData.value.folders
+  let data = rendererData.value.data
+  // dot syntax: https://github.com/sindresorhus/dot-prop
+  let path = `${folders[folders.length - 1].path}[${index}].subdir`
+  folders.push({title: data[index].title, path})
+  await fetchRendererData(path)
+}
+
+const backFolder = async (index) => {
+  let folders = rendererData.value.folders
+  // 根目录不退回
+  if (folders.length <= 1) return
+  if (index) {
+    // 点击面包屑
+    folders.splice(index + 1, folders.length - index - 1)
+  } else {
+    // 点击退回按钮
+    folders.pop()
+  }
+  await fetchRendererData(folders[folders.length - 1].path)
+}
+
+onMounted(async () => {
+  await fetchRendererData('$')
+})
 
 </script>
 

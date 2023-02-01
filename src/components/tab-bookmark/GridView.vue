@@ -1,21 +1,18 @@
 <template>
   <div class="grid-view" @contextmenu="contextMenuHandler.show" @click="focusHandler">
-    <span :class="['single-obj', currentObj.id === 'dir-2001' ? 'active': '']" id="dir-2001">
-      <svg height="40px" viewBox="0 0 1024 1024">
-        <use xlink:href="#icon-folder"/>
-      </svg>
-      <n-ellipsis style="max-width: 90px" :tooltip="false"
-                  title="前端学习笔记真的很重要"> 前端学习笔记真的很重要
-      </n-ellipsis>
-    </span>
-    <span :class="['single-obj', currentObj.id === 'tag-2002' ? 'active': '']" id="tag-2002">
-      <svg height="40px" viewBox="0 0 1024 1024">
-        <use xlink:href="#icon-file"/>
-      </svg>
-      <n-ellipsis style="max-width: 90px" :tooltip="false"
-                  title="前端学习笔记真的很重要"> 前端学习笔记真的很重要
-      </n-ellipsis>
-    </span>
+    <template v-for="(item, index) of props.data" :key="index">
+      <span :class="className(item.id)" :id="item.type + item.id"
+            @dblclick="enterFolder(item)">
+        <svg height="40px" viewBox="0 0 1024 1024">
+          <use v-bind:xlink:href="'#icon-' + item.type"/>
+        </svg>
+        <div>
+          <n-ellipsis style="max-width: 90px" :tooltip="false" :title="item.title">
+            {{ item.title }}
+          </n-ellipsis>
+        </div>
+      </span>
+    </template>
   </div>
   <n-dropdown
       trigger="manual"
@@ -33,28 +30,27 @@
 import {ref, computed, nextTick, h} from 'vue'
 import {NEllipsis, NDropdown} from 'naive-ui'
 
-const data = ref([
-  {title: '框架文档', type: 'dir', path: '/框架文档'},
-  {title: '前端', type: 'dir', path: '/框架文档/前端'},
-  {
-    title: 'Aotu 前端代码规范',
-    type: 'tag',
-    path: '/框架文档/前端/Aotu 前端代码规范',
-    url: 'https://guide.aotu.io/docs/',
-    label: ['前端', '规范']
-  },
-  {
-    title: 'Electron 启动加快',
-    type: 'tag',
-    path: '/框架文档/前端/Electron 启动加快',
-    url: 'https://blog.inkdrop.app/how-to-make-your-electron-app-launch-1000ms-faster-32ce1e0bb52c',
-    label: ['Electron']
-  }
-])
-
-const currentObj = ref({
-  id: '',
+const props = defineProps({
+  data: {required: true, type: Array}
 })
+
+const emit = defineEmits(['enter:folder'])
+
+const currentObj = ref({id: ''})
+
+const className = computed(() => {
+  return (id) => {
+    return ['single-obj', currentObj.value.id === id ? 'active' : '']
+  }
+})
+
+const enterFolder = async (item) => {
+  if (item.type === 'folder') {
+    emit('enter:folder', item.id)
+  } else {
+    await IPC_API.showInBrowser(item.link)
+  }
+}
 
 // 单机切换焦点对象
 const focusHandler = (e) => {
@@ -78,7 +74,7 @@ const contextMenu = {
     if (contextMenu.awakeLoc.value === 'space') {
       return [
         {label: '新建文件夹', key: 'new-folder'},
-        {label: '新建书签', key: 'new-tag'},
+        {label: '新建书签', key: 'new-link'},
         {label: '刷新', key: 'refresh'}
       ]
     } else if (contextMenu.awakeLoc.value === 'folder') {
@@ -88,7 +84,7 @@ const contextMenu = {
         {label: '移动到…', key: 'move'},
         {label: '删除', key: 'remove'},
       ]
-    } else if (contextMenu.awakeLoc.value === 'tag') {
+    } else if (contextMenu.awakeLoc.value === 'link') {
       return [
         {label: '打开浏览器', key: 'preview'},
         {label: '重命名', key: 'rename'},
@@ -119,7 +115,7 @@ const contextMenuHandler = {
       let item = e.path.find(t => {
         return typeof (t.className) === 'string' && t.className.startsWith('single-obj')
       })
-      contextMenu.awakeLoc.value = item.id.startsWith('dir') ? 'folder' : 'tag'
+      contextMenu.awakeLoc.value = item.id.startsWith('folder') ? 'folder' : 'link'
       currentObj.value.id = item.id
     }
     contextMenu.visible.value = false
