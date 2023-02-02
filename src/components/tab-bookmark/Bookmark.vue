@@ -2,7 +2,7 @@
   <div class="na-container">
     <div class="na-action">
       <div class="btn-group">
-        <svg height="40%" viewBox="0 0 1024 1024" @click="backFolder">
+        <svg height="40%" viewBox="0 0 1024 1024" @click="backFolder()">
           <use xlink:href="#icon-back"></use>
         </svg>
         <div>
@@ -26,7 +26,9 @@
       <component
           :is="Views[curView]"
           :data="rendererData.data"
+          :cut="rendererData.cut"
           @enter:folder="enterFolder"
+          @context:click="contextClick"
       />
     </div>
     <div class="info">
@@ -45,6 +47,9 @@ const curView = ref('list')
 const Views = {grid: GridView, list: ListView}
 const changeView = (viewName) => {
   curView.value = viewName
+  // 清空剪切板, 因为两套逻辑不一样
+  // TODO 做一下兼容设置
+  // clearClipBoard()
 }
 
 const info = computed(() => {
@@ -54,7 +59,8 @@ const info = computed(() => {
 
 const rendererData = ref({
   folders: [{title: '根目录', path: '$'}],
-  data: []
+  data: [],
+  cut: {path: null, id: null}
 })
 
 const fetchRendererData = async (path) => {
@@ -62,15 +68,25 @@ const fetchRendererData = async (path) => {
     db: 'bookmark', path, excludes: ['subdir']
   })
   // console.log({path, res})
-  rendererData.value.data = res.map((item, index) => ({id: index, ...item}))
+  // 去除 null 值, 但保留 index 的相对性
+  // 否则会与数据库中的相对次序出现误差
+  let temp = []
+  res.forEach((item, index) => {
+    if (!item) return
+    temp.push({id: index, ...item})
+  })
+  rendererData.value.data = temp
 }
 
-const enterFolder = async (index) => {
+// id 是数据库中的次序, pos 是 nanote 中的次序
+// 很烦~ 呜呜呜~ 救命！ QAQ
+
+const enterFolder = async (id, pos) => {
   let folders = rendererData.value.folders
   let data = rendererData.value.data
   // dot syntax: https://github.com/sindresorhus/dot-prop
-  let path = `${folders[folders.length - 1].path}[${index}].subdir`
-  folders.push({title: data[index].title, path})
+  let path = `${folders[folders.length - 1].path}[${id}].subdir`
+  folders.push({title: data[pos].title, path})
   await fetchRendererData(path)
 }
 
@@ -78,7 +94,8 @@ const backFolder = async (index) => {
   let folders = rendererData.value.folders
   // 根目录不退回
   if (folders.length <= 1) return
-  if (index) {
+  // index 可以是 0
+  if (index !== undefined) {
     // 点击面包屑
     folders.splice(index + 1, folders.length - index - 1)
   } else {
@@ -86,6 +103,69 @@ const backFolder = async (index) => {
     folders.pop()
   }
   await fetchRendererData(folders[folders.length - 1].path)
+}
+
+const contextClick = async ({key, id, pos}) => {
+  let folders = rendererData.value.folders
+  let data = rendererData.value.data
+  let path = folders[folders.length - 1].path
+  console.log({key, id, pos})
+  switch (key) {
+    case 'refresh': {
+      await fetchRendererData(path)
+      // clear clipboard
+      clearClipBoard()
+      break
+    }
+    case 'preview': {
+      await IPC_API.showInBrowser(data[pos].link)
+      break
+    }
+    case 'open': {
+      await enterFolder(id, pos)
+      break
+    }
+    case 'cut': {
+      rendererData.value.cut.path = path
+      rendererData.value.cut.id = id
+      break
+    }
+    case 'paste': {
+      let cut = rendererData.value.cut
+      // source object is an object {}, not array []
+      let sourceObject = await IPC_API.takeSpecialData({db: 'bookmark', path: `${cut.path}[${cut.id}]`})
+      let destLen = await IPC_API.countSpecialSize({db: 'bookmark', path: `${path}`})
+      if (destLen === -1) {
+        alert('can not count size of an object')
+        return
+      }
+      console.table({sourceObject, destLen})
+      await IPC_API.saveSpecialData({db: 'bookmark', path: `${path}[${destLen}]`, value: sourceObject})
+      // TODO 如果 save 成功再删除
+      await IPC_API.removeSpecialData({db: 'bookmark', path: `${cut.path}[${cut.id}]`})
+      await fetchRendererData(path)
+      clearClipBoard()
+      break
+    }
+    case 'remove': {
+      await IPC_API.removeSpecialData({db: 'bookmark', path: `${path}[${id}]`})
+      await fetchRendererData(path)
+      break
+    }
+    case 'refresh': {
+
+      break
+    }
+    case 'refresh': {
+
+      break
+    }
+  }
+}
+
+const clearClipBoard = () => {
+  rendererData.value.cut.path = null
+  rendererData.value.cut.id = null
 }
 
 onMounted(async () => {

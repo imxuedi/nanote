@@ -18,12 +18,41 @@ const store = {
     plugin: new Conf(createOptions('plugin'))
 }
 
+/**
+ * TODO check 'null' values and remove, 'null' values will happen when
+ * store.plugin.set('$', [
+ *     {name: 'hello', value: 100},
+ *     {name: 'hello', value: 200},
+ *     {name: 'hello', value: 300}
+ * ])
+ * store.plugin.delete('$[1]')
+ */
+const removeNull = (arr) => {
+    let healthyArr = []
+    console.log(typeof arr)
+    for (let i = 0, len = arr.length; i < len; i++) {
+        if (arr[i] !== null) {
+            if (arr[i].subdir) {
+                arr[i].subdir = removeNull(arr[i].subdir)
+                healthyArr.push(arr[i])
+            } else {
+                healthyArr.push(arr[i])
+            }
+        }
+    }
+    return healthyArr
+}
+
+
 // init bookmark store if first loading
 const count = store.bookmark.size
 console.log({'bookmark-count': count})
 const res = store.bookmark.get('$')
 if (!Array.isArray(res)) {
     store.bookmark.set('$', [])
+} else {
+    const healthyData = removeNull(res)
+    store.bookmark.set('$', healthyData)
 }
 
 /**
@@ -63,7 +92,7 @@ export const saveSpecialData = (e, params) => {
  */
 export const takeSpecialData = (e, params) => {
     const {db, path, excludes = []} = params
-    console.log({params})
+    console.log({takeSpecialData: params})
     if (!store.hasOwnProperty(db)) return null
     if (!excludes.length) {
         return store[db].get(path)
@@ -71,19 +100,38 @@ export const takeSpecialData = (e, params) => {
     const res = store[db].get(path)
     if (Array.isArray(res)) {
         return res.map(item => {
+            if (!item) return null
             excludes.forEach(name => {
                 delete item[name]
             })
             return item
         })
     }
-    excludes.forEach(item => {
-        delete res[item]
+    excludes.forEach(name => {
+        delete item[name]
     })
     return res
+}
+
+export const countSpecialSize = (e, params) => {
+    const {db, path} = params
+    if (!store.hasOwnProperty(db)) return -1
+    const result = store[db].get(path)
+    if (Array.isArray(result)) {
+        return result.length
+    }
+    return -1
+}
+
+export const removeSpecialData = (e, params) => {
+    const {db, path} = params
+    if (!store.hasOwnProperty(db)) return -1
+    store[db].delete(path)
 }
 
 ipcMain.handle('data:save', saveData)
 ipcMain.handle('data:take', takeData)
 ipcMain.handle('data:saveAt', saveSpecialData)
 ipcMain.handle('data:takeAt', takeSpecialData)
+ipcMain.handle('data:countSizeAt', countSpecialSize)
+ipcMain.handle('data:removeAt', removeSpecialData)

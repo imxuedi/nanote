@@ -1,8 +1,8 @@
 <template>
   <div class="grid-view" @contextmenu="contextMenuHandler.show" @click="focusHandler">
     <template v-for="(item, index) of props.data" :key="index">
-      <span :class="className(item.id)" :id="item.type + item.id"
-            @dblclick="enterFolder(item)">
+      <span :class="className(item.type + item.id)" :id="item.type + item.id"
+            @dblclick="enterFolder(item, index)">
         <svg height="40px" viewBox="0 0 1024 1024">
           <use v-bind:xlink:href="'#icon-' + item.type"/>
         </svg>
@@ -30,23 +30,25 @@
 import {ref, computed, nextTick, h} from 'vue'
 import {NEllipsis, NDropdown} from 'naive-ui'
 
+// ----------------- props ------------------------
 const props = defineProps({
-  data: {required: true, type: Array}
+  data: {required: true, type: Array},
+  cut: {required: true, type: Object}
 })
+// ----------------- emit -------------------------
+const emit = defineEmits(['enter:folder', 'context:click'])
 
-const emit = defineEmits(['enter:folder'])
-
-const currentObj = ref({id: ''})
-
+// ------------------ data ------------------------
+const currentObj = ref({id: '', pos: -1})
 const className = computed(() => {
   return (id) => {
     return ['single-obj', currentObj.value.id === id ? 'active' : '']
   }
 })
 
-const enterFolder = async (item) => {
+const enterFolder = async (item, pos) => {
   if (item.type === 'folder') {
-    emit('enter:folder', item.id)
+    emit('enter:folder', item.id, pos)
   } else {
     await IPC_API.showInBrowser(item.link)
   }
@@ -57,9 +59,10 @@ const focusHandler = (e) => {
   // 空白点击
   if (e.target.className === 'grid-view') {
     currentObj.value.id = ''
+    currentObj.value.pos = -1
     return
   }
-  let item = e.path.find(t => {
+  let item = e.composedPath().find(t => {
     return typeof (t.className) === 'string' && t.className.startsWith('single-obj')
   })
   currentObj.value.id = item.id
@@ -72,24 +75,27 @@ const contextMenu = {
   awakeLoc: ref('space'),
   options: computed(() => {
     if (contextMenu.awakeLoc.value === 'space') {
-      return [
+      let commonOptions = [
         {label: '新建文件夹', key: 'new-folder'},
         {label: '新建书签', key: 'new-link'},
         {label: '刷新', key: 'refresh'}
       ]
+      if (props.cut.id !== null) {
+        commonOptions.unshift({label: '粘贴', key: 'paste'})
+      }
+      return commonOptions
     } else if (contextMenu.awakeLoc.value === 'folder') {
       return [
-        {label: '打开', key: 'open'},
-        {label: '重命名', key: 'rename'},
-        {label: '移动到…', key: 'move'},
+        {label: '打开文件夹', key: 'open'},
+        {label: '编辑', key: 'edit'},
+        {label: '剪切', key: 'cut'},
         {label: '删除', key: 'remove'},
       ]
     } else if (contextMenu.awakeLoc.value === 'link') {
       return [
         {label: '打开浏览器', key: 'preview'},
-        {label: '重命名', key: 'rename'},
         {label: '编辑', key: 'edit'},
-        {label: '移动到…', key: 'move'},
+        {label: '剪切', key: 'cut'},
         {label: '删除', key: 'remove'}
       ]
     }
@@ -97,7 +103,7 @@ const contextMenu = {
   x: ref(0),
   y: ref(0),
   labelRenderer: (item) => {
-    if (item.key === 'open') {
+    if (item.key === 'open' || item.key === 'paste') {
       return h('span', {style: {fontWeight: 'bold'}}, item.label)
     }
     return h('span', null, item.label)
@@ -112,7 +118,7 @@ const contextMenuHandler = {
       // 空白处点击的
       contextMenu.awakeLoc.value = 'space'
     } else {
-      let item = e.path.find(t => {
+      let item = e.composedPath().find(t => {
         return typeof (t.className) === 'string' && t.className.startsWith('single-obj')
       })
       contextMenu.awakeLoc.value = item.id.startsWith('folder') ? 'folder' : 'link'
@@ -129,13 +135,23 @@ const contextMenuHandler = {
     contextMenu.visible.value = false
   },
   select: function (key) {
-    console.log(key)
+    // 这里的处理和 ListView 不同, 每个 id 前加了 folder 或 link
+    // 上报事件时要去掉前缀
+    const match = currentObj.value.id.match(/[0-9]+/)
+    if (match) {
+      const id = Number.parseInt(match[0])
+      const pos = props.data.findIndex(item => item.id === id)
+      emit('context:click', {key, id, pos})
+    } else {
+      emit('context:click', {key, id: null, pos: null})
+    }
+    contextMenu.visible.value = false
   }
 }
 </script>
 
-// TODO 快捷键绑定
-// Delete键 方向键 Home End 键 .etc
+<!--// TODO 快捷键绑定-->
+<!--// Delete键 方向键 Home End 键 .etc-->
 <style lang="scss" scoped>
 .grid-view {
   display: grid;

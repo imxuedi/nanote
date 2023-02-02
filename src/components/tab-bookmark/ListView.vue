@@ -1,5 +1,5 @@
 <template>
-  <div class="list-view" @contextmenu.self="contextMenuHandler.show" @click.self="focusHandler">
+  <div class="list-view" @contextmenu.self="contextMenuHandler.show" @click.self="unFocus">
     <n-data-table
         :columns="tableData.columns"
         :data="props.data"
@@ -28,10 +28,11 @@ import NaSvg from "@/components/main/NaSvg.vue";
 // ------------------------ data definition ------------------------
 
 const props = defineProps({
-  data: {required: true, type: Array}
+  data: {required: true, type: Array},
+  cut: {required: true, type: Object}
 })
 
-const emit = defineEmits(['enter:folder'])
+const emit = defineEmits(['enter:folder', 'context:click'])
 
 const tableData = {
   columns: [
@@ -47,6 +48,11 @@ const tableData = {
     {
       title: '修改日期', key: 'update', resizable: true, width: 250,
       render({update}) {
+        if (update.toString().length < 10) return '未知时间'
+        // 兼容 10 位日期格式 (以秒为单位)
+        if (update.toString().length === 10) {
+          update = update * 1000
+        }
         return h(NTime, {time: update})
       }
     },
@@ -58,7 +64,7 @@ const tableData = {
     }
   ],
   border: true,
-  rowProps: (row) => ({
+  rowProps: (row, pos) => ({
     onContextmenu: (e) => {
       contextMenu.awakeLoc.value = row.type === 'folder' ? 'folder' : 'link'
       contextMenu.visible.value = false
@@ -74,7 +80,7 @@ const tableData = {
     },
     onDblclick: () => {
       if (row.type === 'folder') {
-        emit("enter:folder", row.id)
+        emit("enter:folder", row.id, pos)
       } else {
         IPC_API.showInBrowser(row.link)
       }
@@ -91,10 +97,7 @@ const tableData = {
 
 const currentObj = ref({id: '1'})
 
-const focusHandler = () => {
-  // 空白点击
-  currentObj.value.id = ''
-}
+const unFocus = () => currentObj.value.id = ''
 
 // --------------------------- context menu -------------------------
 
@@ -104,24 +107,27 @@ const contextMenu = {
   awakeLoc: ref('space'),
   options: computed(() => {
     if (contextMenu.awakeLoc.value === 'space') {
-      return [
+      let commonOptions = [
         {label: '新建文件夹', key: 'new-folder'},
         {label: '新建书签', key: 'new-link'},
         {label: '刷新', key: 'refresh'}
       ]
+      if (props.cut.id !== null) {
+        commonOptions.unshift({label: '粘贴', key: 'paste'})
+      }
+      return commonOptions
     } else if (contextMenu.awakeLoc.value === 'folder') {
       return [
-        {label: '打开', key: 'open'},
-        {label: '重命名', key: 'rename'},
-        {label: '移动到…', key: 'move'},
+        {label: '打开文件夹', key: 'open'},
+        {label: '编辑', key: 'edit'},
+        {label: '剪切', key: 'cut'},
         {label: '删除', key: 'remove'},
       ]
     } else if (contextMenu.awakeLoc.value === 'link') {
       return [
         {label: '打开浏览器', key: 'preview'},
-        {label: '重命名', key: 'rename'},
         {label: '编辑', key: 'edit'},
-        {label: '移动到…', key: 'move'},
+        {label: '剪切', key: 'cut'},
         {label: '删除', key: 'remove'}
       ]
     }
@@ -129,7 +135,7 @@ const contextMenu = {
   x: ref(0),
   y: ref(0),
   labelRenderer: (item) => {
-    if (item.key === 'open') {
+    if (item.key === 'open' || item.key === 'paste') {
       return h('span', {style: {fontWeight: 'bold'}}, item.label)
     }
     return h('span', null, item.label)
@@ -152,7 +158,9 @@ const contextMenuHandler = {
     contextMenu.visible.value = false
   },
   select: function (key) {
-    console.log(key)
+    const pos = props.data.findIndex(item => item.id === currentObj.value.id)
+    emit('context:click', {key, id: currentObj.value.id, pos})
+    contextMenu.visible.value = false
   }
 }
 </script>
