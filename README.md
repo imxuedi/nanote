@@ -1,5 +1,10 @@
 # Nanote
 
+## 提醒 | Tips
+`zh:` ⚠ Nanote 正在重构中以更好地支持插件系统，届时会更新部分依赖
+
+`en:` ⚠ Nanote is being refactored to better support the plugin system, and some dependencies will be updated at that time
+
 ## 使用教程 | Guide
 
 ### 下载 | download
