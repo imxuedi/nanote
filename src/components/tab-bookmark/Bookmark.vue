@@ -43,13 +43,14 @@ import {NBreadcrumb, NBreadcrumbItem} from 'naive-ui'
 import GridView from "@/components/tab-bookmark/GridView.vue";
 import ListView from "@/components/tab-bookmark/ListView.vue";
 
+// revert color when img color conflicts with background color
+// import {useRevertColor} from "@/utils/revert-color";
+// useRevertColor(".icon-img", curView, rendererData.value.folders)
+
 const curView = ref('list')
 const Views = {grid: GridView, list: ListView}
 const changeView = (viewName) => {
   curView.value = viewName
-  // 清空剪切板, 因为两套逻辑不一样
-  // TODO 做一下兼容设置
-  // clearClipBoard()
 }
 
 const info = computed(() => {

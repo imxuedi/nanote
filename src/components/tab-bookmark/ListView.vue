@@ -23,7 +23,7 @@
 <script setup>
 import {computed, nextTick, ref, h} from "vue";
 import {NDataTable, NDropdown, NTime} from "naive-ui";
-import NaSvg from "@/components/main/NaSvg.vue";
+import NaImg from "@/components/main/NaImg.vue";
 
 // ------------------------ data definition ------------------------
 
@@ -38,11 +38,16 @@ const tableData = {
   columns: [
     {
       title: '名称', key: 'title', resizable: true,
-      render({title, type}) {
-        let icon = type === 'folder' ? '#icon-folder-small' : '#icon-globe'
-        let children = [h(NaSvg, {icon, height: '25px'}), title]
-        let style = {display: 'flex', alignItems: 'center', lineHeight: '25px'}
-        return h('span', {style}, children)
+      render({title, type, icon}) {
+        if (type === 'folder') {
+          let children = [h(NaImg, {src: '#icon-folder-small', height: 25, type: 'svg'}), title]
+          let style = {display: 'flex', alignItems: 'center', lineHeight: '25px'}
+          return h('span', {style}, children)
+        }
+        if (icon && icon !== 'default') {
+          return h(NaImg, {src: icon, height: 20, type: 'img'}, () => title)
+        }
+        return h(NaImg, {src: '#icon-globe', height: 20, type: 'svg'}, () => title)
       }
     },
     {

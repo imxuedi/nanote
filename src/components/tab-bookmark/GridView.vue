@@ -157,7 +157,8 @@ const contextMenuHandler = {
   display: grid;
   margin-top: 20px;
   grid-template-columns: repeat(auto-fill, 100px);
-  grid-gap: 30px 35px;
+  gap: 15px;
+  align-content: start;
   height: calc(100% - 20px);
   width: 100%;
 }
