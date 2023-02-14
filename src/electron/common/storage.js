@@ -23,7 +23,7 @@ class LowWithLodash extends Low {
  */
 async function initStorage() {
   if (readyState === 'complete') return
-  let path = ""
+  let path
   if (isDev) {
     path = join(app.getAppPath(), 'src/user-data')
   } else {
@@ -52,8 +52,6 @@ async function initStorage() {
   readyState = 'complete'
 }
 
-// initStorage()
-
 /**
  * take data in default db [common.json]
  */
@@ -67,6 +65,9 @@ export const takeData = async (e, params) => {
   // if (conditions) {
   //   data.find()
   // }
+  if (path === 'root') {
+    return store.base.data
+  }
   return store.base.chain.get(path).value()
 }
 

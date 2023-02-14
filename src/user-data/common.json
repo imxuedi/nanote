@@ -1,16 +1,21 @@
 {
-  "theme": {
-    "primaryColor": "#d64541",
-    "backgroundImage": null
-  },
   "behavior": {
     "closeAsHidden": true,
-    "startWithPC": false
+    "startWithPC": false,
+    "stayTopLevel": 1
   },
   "appearance": {
+    "theme": {
+      "darkMode": false,
+      "primaryColor": "blue",
+      "backgroundImage": null
+    },
     "language": "zhCN",
     "windowSize": "medium",
-    "fontSize": "14px"
+    "font": {
+      "size": "14px",
+      "family": ""
+    }
   },
   "plugins": {
     "nanote-todo": {

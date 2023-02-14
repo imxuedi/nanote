@@ -3,12 +3,18 @@ import {fileURLToPath} from "node:url";
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config
-export default defineConfig({
-  publicDir: 'src/public',
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+export default defineConfig(({command}) => {
+  const isDev = command === 'serve'
+  return {
+    plugins: [vue()],
+    build: {
+      sourcemap: isDev
+    },
+    publicDir: 'src/public',
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src/renderer', import.meta.url))
+      }
     }
-  },
-  plugins: [vue()]
+  }
 });

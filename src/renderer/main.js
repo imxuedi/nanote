@@ -1,13 +1,10 @@
 import {createApp} from 'vue'
-// import "@/style/main.css"
-// import "@/style/index.sass"
+import {createPinia} from "pinia";
+import "@/style/main.css"
 import App from './App.vue'
 
-const app = createApp(App)
-  .mount('#app')
-  .$nextTick(() => {
-    // 由于 vite 构建速度实在太快了，所以不得不让动画加载一会儿
-    setTimeout(() => {
-      postMessage({payload: 'removeLoading'}, '*')
-    }, 500)
-  })
+const pinia = createPinia()
+const app = createApp(App);
+
+app.use(pinia)
+app.mount('#app')

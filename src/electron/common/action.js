@@ -1,129 +1,113 @@
-/**
- * 定义系统托盘图标、处理窗口行为
- */
-
 import {Tray, Menu, nativeImage, ipcMain, app} from 'electron'
 import {join} from "node:path";
-import {closeAsHidden} from "./config";
+import {loadUserConfig} from "./config";
+
+let CLOSE_AS_HIDDEN = true
+let STAY_TOP_LEVEL = 'floating'
+let win = null
+let tray = null
 
 
 /**
- * 切换最小化的状态
+ * 设置窗口状态
  */
-const ui_toggle_minimize = (win) => {
-  // doing something others
-  if (!win) return;
-  if (win.isMinimized()) {
-    if (win.isVisible()) {
-      win.show()
-    }
-    win.restore()
-    win.focus()
-  } else {
+const setWindowState = (e, {action, options}) => {
+  if (!win) return
+  // console.log({
+  //   visible: win.isVisible(),
+  //   minimize: win.isMinimized(),
+  //   maximize: win.isMaximized(),
+  //   focus: win.isFocused(),
+  //   modal: win.isModal(),
+  //   normal: win.isNormal(),
+  //   enable: win.isEnabled(),
+  //   close: win.isClosable(),
+  //   fullscreen: win.isFullScreen(),
+  //   top: win.isAlwaysOnTop()
+  // })
+
+  if (action === 'minimize' && (!win.isMinimized())) {
     win.minimize()
+  } else if (action === 'show') {
+    win.show()
+  } else if (action === 'close') {
+    if (CLOSE_AS_HIDDEN) {
+      win.isVisible() && win.hide()
+    } else {
+      win.isClosable() && win.close()
+    }
+  } else if (action === 'top') {
+    if (win.isAlwaysOnTop()) {
+      win.setAlwaysOnTop(false)
+    } else {
+      win.setAlwaysOnTop(true, STAY_TOP_LEVEL)
+    }
   }
 }
-ipcMain.handle('ui:minimize', ui_toggle_minimize)
+ipcMain.handle('win:state', setWindowState)
 
 
 /**
- * 关闭或隐藏到托盘
+ * 加载用户配置
  */
-const ui_toggle_close = (win) => {
-  if (!win) return
-  // 如果不保存到托盘
-  if (!closeAsHidden()) {
-    win.close()
+async function loadConfig() {
+  const userConfig = await loadUserConfig()
+  CLOSE_AS_HIDDEN = userConfig.closeAsHidden()
+  STAY_TOP_LEVEL = userConfig.stayTopLevel()
+}
+
+
+/**
+ * 创建系统托盘
+ */
+export const createTray = async (mainWindow) => {
+  // 如果 win 不存在
+  if (!mainWindow) {
+    app.quit()
     return
   }
-  win.isVisible() ? win.hide() : win.show()
-}
-ipcMain.handle('ui:close', ui_toggle_close)
-
-
-/**
- * 直接关闭
- */
-const ui_direct_close = (win) => win?.close()
-
-
-/**
- * 窗口是否可见
- */
-const ui_window_open = (win) => win?.isVisible()
-
-
-/**
- * 窗口重现
- */
-const ui_window_show = (win) => {
-  if (!win) return
-  if (win.isMinimized()) {
-    win.restore()
-  }
-  win.show()
-  win.focus()
-}
-
-
-/**
- * 窗口是被聚焦
- */
-const ui_window_focused = (win) => win?.isFocused()
-
-
-let tray = null
-export const createTray = (win) => {
-  if (!closeAsHidden()) return
+  win = mainWindow
+  // 加载用户配置
+  await loadConfig()
+  // 如果关闭不是保存到托盘
+  if (!CLOSE_AS_HIDDEN) return
+  // 加载托盘和托盘菜单
   app.whenReady().then(() => {
     // 开发时静态文件放在最外层的 public 目录下
-    const path = join(__dirname, "static/favicon.png")
+    const path = join(__dirname, "favicon.png")
     const icon = nativeImage.createFromPath(path)
     tray = new Tray(icon)
-    const contextMenu = Menu.buildFromTemplate([
-      {
-        id: '1',
-        label: '显示主界面',
-        click: () => ui_toggle_close(win),
-        visible: false,
-      },
-      {
-        id: '2',
-        label: '隐藏主界面',
-        click: () => ui_toggle_close(win),
-        visible: true,
-      },
-      {
-        id: '3',
-        label: '退出程序',
-        role: 'quit'
-      }
-    ])
+    // 单击显示主界面，linux 不一定是左键, 将来可能要做兼容设置
+    tray.on('click', () => setWindowState(
+      null, {action: 'show'}
+    ))
+    // 设置右键菜单 修好了多年的老毛病 => 'menu-will-show'
+    createContextMenu()
+    win.on('show', () => createContextMenu(true))
+    win.on('hide', () => createContextMenu(false))
 
-    // '显示主界面' 和 '隐藏主界面的' 菜单的切换
-    // TODO 存在右键菜单二次点击显示才正确的 BUG
-    contextMenu.on('menu-will-show', () => {
-      // console.log({visible: core.win.isVisible()})
-      // console.log({hide: core.win.isHidden()})
-
-      if (ui_window_open(win)) {
-        contextMenu.items[0].visible = false
-        contextMenu.items[1].visible = true
-      } else {
-        contextMenu.items[0].visible = true
-        contextMenu.items[1].visible = false
-      }
-    })
-
-    // 单击显示主界面
-    // linux 不一定是左键, 将来可能要做兼容设置
-    tray.on('click', () => ui_window_show(win))
-
-    tray.setContextMenu(contextMenu)
     tray.setIgnoreDoubleClickEvents(true)
     tray.setToolTip('Nanote Box')
     // title 只在 macos 上起作用
     tray.setTitle('Nanote Box')
   })
+  app.on('will-quit', () => tray?.destroy())
 }
 
+const createContextMenu = (state = true) => {
+  let menu = []
+  if (state) {
+    menu.push({
+      label: '隐藏主界面',
+      click: () => setWindowState(null, {action: 'close'})
+    })
+  } else {
+    menu.push({
+      label: '显示主界面',
+      click: () => setWindowState(null, {action: 'show'})
+    })
+  }
+  menu.push({label: '退出程序', role: 'quit'})
+  const contextMenu = Menu.buildFromTemplate(menu)
+  tray.setContextMenu(contextMenu)
+}

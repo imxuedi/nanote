@@ -1,8 +1,9 @@
-import {app, BrowserWindow} from "electron";
+import {app, BrowserWindow, session} from "electron";
 import {join} from "node:path"
-import {getWindowSize} from './common/config'
-// import {createTray} from './common/action'
-// import './common/storage'
+import {loadUserConfig} from './common/config'
+import {createTray} from './common/action'
+
+import './common/storage'
 // import './common/plugin'
 
 /**
@@ -40,32 +41,44 @@ import {getWindowSize} from './common/config'
  * 创建主窗口
  */
 let win = null
-const createWindow = () => {
-  const winSize = getWindowSize('medium')
-  console.log({dirname: __dirname})
+const createWindow = async () => {
+  const {getWindowSize} = await loadUserConfig()
+  const winSize = getWindowSize()
+
   win = new BrowserWindow({
     // 固定宽高, 不带菜单栏, 透明的主窗口
     width: winSize.width,
     height: winSize.height,
     frame: false,
     resizable: false,
-    // transparent: true,
-    maximizable: false,
+    transparent: true,
+    // maximizable: false,
     useContentSize: true,
-    icon: join(__dirname, 'static/favicon.png'),
+    icon: join(__dirname, 'favicon.png'),
     webPreferences: {
       preload: join(__dirname, 'preload/index.js'),
-      spellcheck: false
+      spellcheck: false,
+      // nodeIntegration: true,
+      // contextIsolation: false
     }
   })
   if (isDev) {
-    win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    await win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
     win.webContents.openDevTools({mode: 'bottom'})
+    // 加载 Vue 扩展
+    // app.whenReady()
+    //   .then(() => import("electron-devtools-installer"))
+    //   .then(({default: installExtension, VUEJS_DEVTOOLS}) =>
+    //     installExtension(VUEJS_DEVTOOLS.id, {
+    //       loadExtensionOptions: {allowFileAccess: true}
+    //     })
+    //   )
+    //   .catch((e) => console.error("Failed install extension:", e));
   } else {
-    win.loadFile(join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    await win.loadFile(join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
   // 托盘
-  // createTray(win)
+  await createTray(win)
 };
 
 app.on('ready', createWindow);

@@ -91,3 +91,8 @@ out/
 # IDE
 .idea
 .vscode
+
+# test
+test
+.vite
+src/chrome/*

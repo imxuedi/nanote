@@ -40,7 +40,7 @@ const {appendLoading, removeLoading} = useLoading()
 
 document.addEventListener('DOMContentLoaded', () => {
   appendLoading()
-  setTimeout(removeLoading, 5000)
+  setTimeout(removeLoading, 10000)
   window.onmessage = (ev) => {
     ev.data.payload === 'removeLoading' && removeLoading()
   }
