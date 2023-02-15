@@ -1,11 +1,17 @@
 import {Tray, Menu, nativeImage, ipcMain, app} from 'electron'
 import {join} from "node:path";
-import {loadUserConfig} from "./config";
+import {closeAsHidden, stayTopLevel} from "./config";
 
-let CLOSE_AS_HIDDEN = true
 let STAY_TOP_LEVEL = 'floating'
+let CLOSE_AS_HIDDEN = true
 let win = null
 let tray = null
+
+
+export const initAction = () => {
+  STAY_TOP_LEVEL = stayTopLevel()
+  CLOSE_AS_HIDDEN = closeAsHidden()
+}
 
 
 /**
@@ -48,27 +54,16 @@ ipcMain.handle('win:state', setWindowState)
 
 
 /**
- * 加载用户配置
- */
-async function loadConfig() {
-  const userConfig = await loadUserConfig()
-  CLOSE_AS_HIDDEN = userConfig.closeAsHidden()
-  STAY_TOP_LEVEL = userConfig.stayTopLevel()
-}
-
-
-/**
  * 创建系统托盘
  */
-export const createTray = async (mainWindow) => {
+export const createTray = (mainWindow) => {
   // 如果 win 不存在
   if (!mainWindow) {
     app.quit()
     return
   }
   win = mainWindow
-  // 加载用户配置
-  await loadConfig()
+
   // 如果关闭不是保存到托盘
   if (!CLOSE_AS_HIDDEN) return
   // 加载托盘和托盘菜单

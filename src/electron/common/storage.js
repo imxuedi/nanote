@@ -21,13 +21,13 @@ class LowWithLodash extends Low {
 /**
  * 数据库初始化配置
  */
-async function initStorage() {
+export async function initStorage() {
   if (readyState === 'complete') return
   let path
   if (isDev) {
     path = join(app.getAppPath(), 'src/user-data')
   } else {
-    path = join(app.getPath('userData'), 'nanote-data')
+    path = join(app.getPath('userData'), 'nanote-data/user-data')
   }
   // 读取基本配置
   const adapter = new JSONFile(join(path, 'common.json'))
@@ -55,10 +55,7 @@ async function initStorage() {
 /**
  * take data in default db [common.json]
  */
-export const takeData = async (e, params) => {
-  if (readyState !== 'complete') {
-    await initStorage()
-  }
+export const takeData = (e, params) => {
   // electron 内部调用
   params ??= e
   const {path, conditions} = params

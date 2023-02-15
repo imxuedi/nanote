@@ -1,50 +1,17 @@
-import {app, BrowserWindow, session} from "electron";
+import {app, BrowserWindow} from "electron";
 import {join} from "node:path"
-import {loadUserConfig} from './common/config'
-import {createTray} from './common/action'
+import './common/optimize' // set isDev
+import {initStorage} from "./common/storage";
+import {initConfig, getWindowSize} from './common/config'
+import {initAction, createTray} from './common/action'
+import {initKoaApp, loadPluginScript, createManifestCache} from "./common/plugin";
 
-import './common/storage'
-// import './common/plugin'
-
-/**
- * 启动前优化
- */
-(function optimizeApp() {
-  // 处理桌面图标
-  if (require('electron-squirrel-startup')) {
-    app.quit();
-  }
-
-  // 禁用 GPU 加速
-  app.disableHardwareAcceleration()
-
-  // Set application name for Windows 10+ notifications
-  if (process.platform === 'win32') app.setAppUserModelId(app.getName())
-
-  if (!app.requestSingleInstanceLock()) {
-    app.quit()
-    process.exit(0)
-  }
-
-  // 解决窗口恢复显示的闪烁问题
-  app.commandLine.appendSwitch('wm-window-animations-disabled');
-
-  // 关闭安全警告
-  process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
-
-  // 是否在开发模式
-  global.isDev = !!MAIN_WINDOW_VITE_DEV_SERVER_URL
-
-})()
-
-/**
- * 创建主窗口
- */
 let win = null
-const createWindow = async () => {
-  const {getWindowSize} = await loadUserConfig()
-  const winSize = getWindowSize()
 
+// -------------- 创建主窗口 -----------------
+// 最重要的事情啦！
+const createWindow = () => {
+  const winSize = getWindowSize()
   win = new BrowserWindow({
     // 固定宽高, 不带菜单栏, 透明的主窗口
     width: winSize.width,
@@ -58,12 +25,10 @@ const createWindow = async () => {
     webPreferences: {
       preload: join(__dirname, 'preload/index.js'),
       spellcheck: false,
-      // nodeIntegration: true,
-      // contextIsolation: false
     }
   })
   if (isDev) {
-    await win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
     win.webContents.openDevTools({mode: 'bottom'})
     // 加载 Vue 扩展
     // app.whenReady()
@@ -75,22 +40,38 @@ const createWindow = async () => {
     //   )
     //   .catch((e) => console.error("Failed install extension:", e));
   } else {
-    await win.loadFile(join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    win.loadFile(join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
   // 托盘
-  await createTray(win)
+  createTray(win)
 };
 
-app.on('ready', createWindow);
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
+const bindAppListeners = () => {
+  // app.on('ready', createWindow);
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+  app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+}
+
+
+// 优雅的代码执行
+initStorage()
+  .then(() => {
+    initConfig()
+    initAction()
+    initKoaApp()
+    loadPluginScript()
+    bindAppListeners()
+    createWindow()
+    createManifestCache()
+  })
+  .catch((error) => console.error(error))

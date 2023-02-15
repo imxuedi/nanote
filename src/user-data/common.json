@@ -19,15 +19,24 @@
   },
   "plugins": {
     "nanote-todo": {
+      "icon": "static/icon.png",
+      "main": {
+        "entry": "index.html",
+        "fixed": true
+      },
+      "widget": false,
+      "enable": true,
+      "db": 0
+    },
+    "nanote-bookmark": {
       "enable": false,
-      "db": 0,
-      "fixed": true,
       "widget": {
         "x": 0,
         "y": 0,
         "size": "4x4",
         "fixed": true
-      }
+      },
+      "db": 0
     }
   },
   "storage": {

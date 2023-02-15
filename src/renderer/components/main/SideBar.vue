@@ -8,29 +8,42 @@
         <use xlink:href="#alphabet-A"></use>
       </svg>
     </div>
-    <div class="app-icon">
-      <div class="icon-outline active">
+    <div class="app-icon" @click="changeCurrentApp">
+      <div :class="['icon-outline', pluginStore.currentApp === 'widget' ? 'active': '']"
+           id="widget-icon">
         <svg height="25px" viewBox="0 0 1024 1024">
           <use xlink:href="#app-widget"></use>
         </svg>
       </div>
-      <div class="icon-outline">
-        <svg height="25px" viewBox="0 0 1024 1024">
-          <use xlink:href="#app-home"></use>
-        </svg>
-      </div>
-      <div class="icon-outline">
-        <svg height="25px" viewBox="0 0 1024 1024">
-          <use xlink:href="#app-home"></use>
-        </svg>
-      </div>
+      <!--   上面是 widget 下面是 plugins   -->
+      <template v-for="plugin of pluginStore.fixedPlugins" :key="plugin.name">
+        <div :class="['icon-outline', pluginStore.currentApp === plugin.name ? 'active': '']"
+             :id="plugin.name + '-icon'">
+          <img :src="`http://localhost:7465/${plugin.name}/${plugin.icon}`" alt="Icon">
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
 import {useColorStore} from "../../pinia/ColorStore";
+import {usePluginStore} from "../../pinia/PluginStore";
+import {useLogger} from "../../hooks/useLogger";
+
 const colorStore = useColorStore()
+const pluginStore = usePluginStore()
+
+const changeCurrentApp = (e) => {
+  let item = e.composedPath().find(t => t.id?.endsWith('icon'))
+  // 点击了空白区域
+  if (!item) return
+  let name = item.id.replace('-icon', '')
+  if (pluginStore.currentApp !== name) {
+    useLogger.purple('switch component ', name)
+    pluginStore.changeCurrentPlugin(name)
+  }
+}
 
 </script>
 
@@ -72,8 +85,12 @@ const colorStore = useColorStore()
       }
 
       &.active {
-        //color: var(--BASE3);
         background-color: var(--BASE3);
+      }
+
+      > img {
+        height: 25px;
+        width: 25px;
       }
     }
   }

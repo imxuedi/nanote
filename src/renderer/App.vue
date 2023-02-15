@@ -2,22 +2,19 @@
   <Icons/>
   <n-config-provider :theme-overrides="themeOverrides">
     <n-layout has-sider style="border-radius: 5px;">
-      <n-layout-sider
-          content-style="padding: 24px;"
-          class="side-menu-bar"
-      >
+      <n-layout-sider class="side-menu-bar">
         <side-bar/>
       </n-layout-sider>
       <n-layout>
         <n-layout-header class="top-search-bar">
           <top-bar/>
         </n-layout-header>
-        <n-layout-content content-style="padding: 24px;">
-          平山道
+        <n-layout-content>
+          <content/>
         </n-layout-content>
-        <n-layout-footer class="bottom-info-bar">
-          <bottom-bar/>
-        </n-layout-footer>
+        <!--        <n-layout-footer class="bottom-info-bar">-->
+        <!--          <bottom-bar/>-->
+        <!--        </n-layout-footer>-->
       </n-layout>
     </n-layout>
   </n-config-provider>
@@ -29,9 +26,10 @@ import {
   NConfigProvider
 } from "naive-ui";
 import TopBar from "./components/main/TopBar.vue";
-import BottomBar from "./components/main/BottomBar.vue";
+// import BottomBar from "./components/main/BottomBar.vue";
 import SideBar from "./components/main/SideBar.vue";
 import Icons from "./components/main/Icons.vue";
+import Content from "./components/main/Content.vue";
 
 import {computed, onMounted} from "vue";
 import {useUserStore} from "./pinia/UserStore";
@@ -40,6 +38,7 @@ import {usePalettes} from "./hooks/useColor";
 
 const userStore = useUserStore()
 const colorStore = useColorStore()
+
 
 /**
  * 默认主题覆盖
@@ -57,8 +56,6 @@ const themeOverrides = computed(() => {
     },
   }
 })
-
-
 
 // 获取配置并注入 pinia
 IPC_API
@@ -110,10 +107,10 @@ onMounted(() => {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   box-shadow: 0 2px 8px -2px #ddd;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
-.bottom-info-bar {
-  height: 3vh;
-}
+//.bottom-info-bar {
+//  height: 3vh;
+//}
 </style>
