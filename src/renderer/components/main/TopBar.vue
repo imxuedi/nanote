@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar" :style="colorStore.cssVariable">
+  <div class="top-bar">
     <div class="title">
       <span></span>
     </div>
@@ -58,7 +58,7 @@
     </div>
     <div class="action">
       <svg height="13px" viewBox="0 0 1024 1024" @click="setWindowState('top')"
-           :style="{backgroundColor: top ? colorStore.BASE2: ''}"
+           :style="{backgroundColor: top ? 'var(--BASE2)': ''}"
       >
         <use xlink:href="#stay-top"></use>
       </svg>
@@ -74,12 +74,7 @@
 
 <script setup>
 import {NButton, NSpace, NSwitch, NDropdown, NAutoComplete, NPopselect} from "naive-ui";
-import {useColorStore} from "../../pinia/ColorStore";
 import {computed, ref} from "vue";
-
-// 样式
-const colorStore = useColorStore()
-
 
 // 动态搜索
 const searchValue = ref("")
@@ -114,6 +109,7 @@ const options = [
 ]
 const selectOptions = (option) => {
   console.log(option)
+  IPC_API.openItem({type: 'setting', args: option})
 }
 
 // 数据同步

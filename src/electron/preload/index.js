@@ -1,12 +1,16 @@
-import './loading.js'
 import {ipcRenderer, contextBridge} from 'electron'
 
+const useLoading = () => import( './loading.js')
+
+if (location.pathname === '/') {
+  useLoading()
+}
 
 contextBridge.exposeInMainWorld('IPC_API', {
   // params: { action: 'minimize|close|top', options: '' }
   setWindowState: (params) => ipcRenderer.invoke('win:state', params),
-  // params: { type: 'browser|file', options: 'url|location' }
-  showItem: (params) => ipcRenderer.invoke('show:item', params),
+  // params: { type: 'browser|file', args: 'url|location' }
+  openItem: (params) => ipcRenderer.invoke('open:item', params),
 
   saveLocalData: (params) => ipcRenderer.invoke('data:save', params),
   takeLocalData: (params) => ipcRenderer.invoke('data:take', params),

@@ -5,6 +5,13 @@ import {initStorage} from "./common/storage";
 import {initConfig, getWindowSize} from './common/config'
 import {initAction, createTray} from './common/action'
 import {initKoaApp, loadPluginScript, createManifestCache} from "./common/plugin";
+import {initSettingWindow} from "./common/open-item";
+
+/**
+ * 一些思考：为什么 win 不放在 global 中使用，这样不是更方便吗？
+ *
+ * 考虑到一些插件有 nodejs 的脚本需求，放在全局十分危险
+ */
 
 let win = null
 
@@ -73,5 +80,6 @@ initStorage()
     bindAppListeners()
     createWindow()
     createManifestCache()
+    initSettingWindow(win)
   })
   .catch((error) => console.error(error))

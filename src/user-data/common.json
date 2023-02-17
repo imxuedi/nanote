@@ -7,11 +7,11 @@
   "appearance": {
     "theme": {
       "darkMode": false,
-      "primaryColor": "blue",
+      "primaryColor": "orange",
       "backgroundImage": null
     },
     "language": "zhCN",
-    "windowSize": "medium",
+    "windowSize": "small",
     "font": {
       "size": "14px",
       "family": ""

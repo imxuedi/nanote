@@ -1,5 +1,5 @@
 <template>
-  <div class="side-bar" :style="colorStore.cssVariable">
+  <div class="side-bar">
     <div class="app-logo">
       <svg height="18px" viewBox="0 0 1024 1024">
         <use xlink:href="#alphabet-N"></use>
@@ -27,11 +27,9 @@
 </template>
 
 <script setup>
-import {useColorStore} from "../../pinia/ColorStore";
 import {usePluginStore} from "../../pinia/PluginStore";
 import {useLogger} from "../../hooks/useLogger";
 
-const colorStore = useColorStore()
 const pluginStore = usePluginStore()
 
 const changeCurrentApp = (e) => {
@@ -50,7 +48,7 @@ const changeCurrentApp = (e) => {
 <style lang="scss" scoped>
 .side-bar {
   height: 100%;
-  color: var(--PRIMARY);
+  color: var(--BASE7);
   background-color: var(--BASE1);
 
 

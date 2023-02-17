@@ -6,7 +6,7 @@ const render = ($) => {
 
 ((global) => {
 
-  global['purehtml'] = {
+  global['obuok'] = {
     bootstrap: () => {
       console.log('purehtml bootstrap');
       return Promise.resolve();
@@ -20,5 +20,9 @@ const render = ($) => {
       console.log('purehtml unmount');
       return Promise.resolve();
     },
+    update: () => {
+      console.log('purehtml update');
+      return Promise.resolve();
+    }
   };
 })(window);

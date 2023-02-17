@@ -1,8 +1,8 @@
 {
-  "name": "nanote-rrbuild",
-  "productName": "nanote-rrbuild",
+  "name": "nanote",
+  "productName": "nanote",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Nanote Box",
   "main": ".vite/electron/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -11,7 +11,11 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
-  "keywords": [],
+  "keywords": [
+    "electron",
+    "vue3",
+    "vite"
+  ],
   "author": {
     "name": "nickel",
     "email": "nanote@qq.com"
@@ -34,7 +38,6 @@
   },
   "dependencies": {
     "@ant-design/colors": "^7.0.0",
-    "fabric": "^5.3.0",
     "front-matter": "^4.0.2",
     "koa": "^2.14.1",
     "koa-static": "^5.0.0",
@@ -42,7 +45,7 @@
     "lowdb": "^5.1.0",
     "naive-ui": "^2.34.3",
     "pinia": "^2.0.30",
-    "qiankun": "file:qiankun-lib",
+    "qiankun": "file:lib/qiankun-lib",
     "snarkdown": "^2.0.0",
     "vue": "^3.2.47"
   }
