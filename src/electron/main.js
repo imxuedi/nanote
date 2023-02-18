@@ -28,6 +28,7 @@ const createWindow = () => {
     transparent: true,
     // maximizable: false,
     useContentSize: true,
+    // fullscreenable: false,
     icon: join(__dirname, 'favicon.png'),
     webPreferences: {
       preload: join(__dirname, 'preload/index.js'),

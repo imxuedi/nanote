@@ -7,7 +7,7 @@
   "appearance": {
     "theme": {
       "darkMode": false,
-      "primaryColor": "geekblue",
+      "primaryColor": "volcano",
       "backgroundImage": null
     },
     "language": "zhCN",
@@ -45,12 +45,12 @@
     ]
   },
   "sync": {
-    "enable": true,
+    "enable": false,
     "ssh": {
       "loginManner": "key",
       "hostname": "106.14.121.69",
       "password": "123456"
     },
-    "manner": "ssh"
+    "manner": "ftp"
   }
 }

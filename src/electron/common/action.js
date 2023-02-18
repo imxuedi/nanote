@@ -1,12 +1,15 @@
 import {Tray, Menu, nativeImage, ipcMain, app} from 'electron'
 import {join} from "node:path";
-import {closeAsHidden, stayTopLevel} from "./config";
+import {closeAsHidden, stayTopLevel, getWindowSize} from "./config";
 
 let STAY_TOP_LEVEL = 'floating'
 let CLOSE_AS_HIDDEN = true
 let win = null
 let tray = null
 
+// electron 的 api 不准确，要自己判断
+let IS_FULLSCREEN = false
+let FULLSCREEN_BEFORE = {x: 0, y: 0}
 
 export const initAction = () => {
   STAY_TOP_LEVEL = stayTopLevel()
@@ -48,6 +51,9 @@ const setWindowState = (e, {action, options}) => {
     } else {
       win.setAlwaysOnTop(true, STAY_TOP_LEVEL)
     }
+  } else if (action === 'size') {
+    const {width, height} = getWindowSize(options)
+    win.setBounds({width, height})
   }
 }
 ipcMain.handle('win:state', setWindowState)
@@ -75,6 +81,9 @@ export const createTray = (mainWindow) => {
     return
   }
   win = mainWindow
+
+  // 处理全屏相关问题
+  handleFullScreen()
 
   // 如果关闭不是保存到托盘
   if (!CLOSE_AS_HIDDEN) return
@@ -118,4 +127,20 @@ const createContextMenu = (state = true) => {
   menu.push({label: '退出程序', role: 'quit'})
   const contextMenu = Menu.buildFromTemplate(menu)
   tray.setContextMenu(contextMenu)
+}
+
+const handleFullScreen = () => {
+  win.on('enter-full-screen', () => {
+    const {x, y} = win.getBounds()
+    IS_FULLSCREEN = true
+    FULLSCREEN_BEFORE = {x, y}
+  })
+  win.on('moved', () => {
+    if (IS_FULLSCREEN) {
+      const {width, height} = getWindowSize()
+      const {x, y} = FULLSCREEN_BEFORE
+      win.setBounds({x, y, width, height})
+      IS_FULLSCREEN = false
+    }
+  })
 }
