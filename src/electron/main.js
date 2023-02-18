@@ -36,7 +36,8 @@ const createWindow = () => {
   })
   if (isDev) {
     win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
-    win.webContents.openDevTools({mode: 'bottom'})
+    // win.webContents.openDevTools({mode: "right"})
+    // win.webContents.toggleDevTools()
     // 加载 Vue 扩展
     // app.whenReady()
     //   .then(() => import("electron-devtools-installer"))

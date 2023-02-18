@@ -1,6 +1,5 @@
 import {ipcRenderer, contextBridge} from 'electron'
-
-const useLoading = () => import( './loading.js')
+import {useLoading} from "./loading";
 
 if (location.pathname === '/') {
   useLoading()

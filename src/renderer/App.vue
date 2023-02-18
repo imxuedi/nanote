@@ -1,12 +1,14 @@
 <template>
   <Icons/>
   <n-config-provider :theme-overrides="themeOverrides">
-    <component :is="currentComponent()"/>
+<!--    <n-dialog-provider>-->
+      <component :is="currentComponent()"/>
+<!--    </n-dialog-provider>-->
   </n-config-provider>
 </template>
 
 <script setup>
-import {computed, onMounted} from "vue";
+import {computed} from "vue";
 import {NConfigProvider} from "naive-ui";
 
 import Icons from "@/components/main/Icons.vue";
@@ -32,7 +34,7 @@ const themeOverrides = computed(() => {
       primaryColorHover: colorStore.BASE5,
       primaryColorPressed: colorStore.BASE7,
       primaryColorSuppl: colorStore.BASE5,
-      hoverColor: colorStore.BASE1
+      hoverColor: colorStore.BASE2
     },
   }
 })

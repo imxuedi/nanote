@@ -2,7 +2,15 @@
   <!-- 单个选项，表示是否启用某项 -->
   <div class="setting-item" v-if="data.type === 'checkbox'">
     <div>
-      <n-checkbox v-model:checked="myValue" :label="data.label"/>
+      <n-checkbox
+          v-model:checked="myValue" :label="data.label"
+          @update:checked="handleValueChange"
+      />
+      <span :title="data.question" v-if="data.question">
+        <svg viewBox="0 0 1024 1024" height="15px" class="question">
+          <use xlink:href="#question"/>
+        </svg>
+      </span>
     </div>
   </div>
 
@@ -10,12 +18,16 @@
   <div class="setting-item group" v-else-if="data.type.startsWith('radio')">
     <p>
       {{ data.label }}
-      <svg viewBox="0 0 1024 1024" height="15px" class="question">
-        <use xlink:href="#question"></use>
-      </svg>
+      <span :title="data.question" v-if="data.question">
+        <svg viewBox="0 0 1024 1024" height="15px" class="question">
+          <use xlink:href="#question"/>
+        </svg>
+      </span>
     </p>
     <div class="indent">
-      <n-radio-group v-model:value="myValue" name="radio-group">
+      <n-radio-group
+          v-model:value="myValue" name="radio-group"
+          @update:value="handleValueChange">
         <n-space :vertical="data.type==='radio-v'">
           <n-radio v-for="cc of data.items" :value="cc.key" :label="cc.label"/>
         </n-space>
@@ -27,35 +39,66 @@
   <div class="setting-item group" v-else-if="data.type === 'select'">
     <p>{{ data.label }}</p>
     <div class="indent">
-      <n-select v-model:value="myValue" :options="selectOptions(data)"/>
+      <n-select
+          v-model:value="myValue"
+          :options="selectOptions(data)"
+          @update:value="handleValueChange"
+      />
     </div>
   </div>
 
   <!-- 选择颜色时使用 -->
   <div class="setting-item group" v-else-if="data.type === 'color'">
-    <p>{{ data.label }}</p>
+    <p>
+      {{ data.label }}
+      <span :title="data.question" v-if="data.question">
+        <svg viewBox="0 0 1024 1024" height="15px" class="question">
+          <use xlink:href="#question"/>
+        </svg>
+      </span>
+      &nbsp;
+      <n-button
+          title="手动改一下" size="small" @click="openConfig" tertiary> 配置文件
+      </n-button>
+    </p>
     <div class="indent color">
-      <div v-for="cc of data.items" :key="cc.key" :style="{border: '2px solid ' + useColor(cc.key)}">
-        <div class="color-box" :style="{backgroundColor: useColor(cc.key)}">
+      <template v-for="cc of data.items" :key="cc.key" :style="{border: '2px solid ' + useColor(cc.key)}">
+        <div v-if="cc.key !== 'custom'"
+             class="color-box"
+             @click="changeThemeColor(cc.key)"
+             :style="{backgroundColor: useColor(cc.key)}">
+          <span>{{ cc.label }}</span>
         </div>
-        <span>{{ cc.label }}</span>
-      </div>
+      </template>
     </div>
   </div>
 
   <!-- 输入值时使用 -->
   <div class="setting-item group" v-else-if="data.type === 'input'">
-    <p>{{ data.label }}</p>
-    <div class="indent">
-      <n-input v-model="myValue"></n-input>
+    <!--    <p>{{ data.label }}</p>-->
+    <div class="">
+      <n-input
+          v-model="myValue"
+          autosize style="min-width: 20%"
+          @update:value="handleValueChange"
+          :placeholder="data.label"
+          clearable
+          size="small"
+      />
     </div>
   </div>
 
   <!-- 打开配置文件自己瞎搞吧 -->
   <div class="setting-item group" v-else-if="data.type === 'manual'">
-    <p>{{ data.label }}</p>
+    <p>{{ data.label }}
+      <span :title="data.question" v-if="data.question">
+        <svg viewBox="0 0 1024 1024" height="15px" class="question">
+          <use xlink:href="#question"/>
+        </svg>
+      </span>
+    </p>
     <div class="indent">
-      <n-button size="small" type="tertiary">打开配置文件</n-button>
+      <n-button size="small" tertiary>打开配置文件</n-button>
     </div>
   </div>
 
@@ -70,17 +113,31 @@
 </template>
 
 <script setup>
-import {computed, ref, watchEffect} from "vue";
-import {NAlert, NRadioGroup, NButton, NSelect, NRadio, NCheckbox, NInput} from 'naive-ui'
+import {computed, ref, watch} from "vue";
+import {
+  NAlert, NRadioGroup, NButton,
+  NSelect, NRadio, NCheckbox,
+  NInput, NColorPicker
+} from 'naive-ui'
 import {presetPalettes, presetDarkPalettes} from "@ant-design/colors";
+import {useColorStore} from "@/pinia/ColorStore";
+import {useUserStore} from "@/pinia/UserStore";
+import {usePalettes} from "@/hooks/useColor";
+import {useLogger} from "@/hooks/useLogger";
 
-const props = defineProps(['data', 'modelValue'])
-const emit = defineEmits(['update:modelValue'])
-
+const props = defineProps(['data'])
+const colorStore = useColorStore()
+const userStore = useUserStore()
 const myValue = ref(props.data.value)
 
-// 省时省力，自动更新
-watchEffect(() => emit('update:modelValue', myValue.value))
+// 传递用户数据
+watch(props, () => myValue.value = props.data.value)
+
+const handleValueChange = (value) => {
+  useLogger.purple(props.data.path, " ----> ", value)
+  console.log(myValue.value)
+  IPC_API.saveLocalData({path: props.data.path, value})
+}
 
 const useColor = computed(() => {
   return (name) => {
@@ -93,8 +150,28 @@ const useColor = computed(() => {
   }
 })
 
+
 const selectOptions = (item) => {
   return item.items.map(t => ({label: t.label, value: t.key}))
+}
+
+
+const changeThemeColor = (color) => {
+  useLogger.purple(props.data.path, " ----> ", color)
+  IPC_API
+      .saveLocalData({path: props.data.path, value: color})
+      .then(() => {
+        userStore.appearance.theme.primaryColor = color
+        const darkMode = userStore.theme.darkMode
+        const colors = usePalettes(color, darkMode)
+        console.log({colors})
+        colorStore.$patch(colors)
+      })
+}
+
+
+const openConfig = () => {
+  IPC_API.openItem({type: 'file', args: "config"})
 }
 
 </script>
@@ -119,12 +196,12 @@ svg.question {
 .color {
   display: grid;
   grid-template-columns: repeat(auto-fill, 50px);
-  gap: 30px;
+  gap: 30px 40px;
+  margin-bottom: 40px;
 
   > div {
-    width: 100%;
     padding: 5px;
-    height: 50px;
+    height: 40px;
     cursor: pointer;
     border-radius: 5px;
 
@@ -134,13 +211,14 @@ svg.question {
       display: block;
       text-align: center;
       white-space: nowrap;
+      color: #ffffff;
     }
   }
 
   .color-box {
     border-radius: 5px;
-    height: 100%;
-    width: 100%;
+    //height: 100%;
+    //width: 100%;
   }
 }
 

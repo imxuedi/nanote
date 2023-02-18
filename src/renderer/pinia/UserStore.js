@@ -10,7 +10,16 @@ export const useUserStore = defineStore('user', {
       "font": {"size": "14px", "family": ""}
     },
     "plugins": {},
-    "storage": {db: ['db0']}
+    "storage": {db: ['db0']},
+    "sync": {
+      enable: true,
+      manner: 'ssh',
+      "ssh": {
+        hostname: 'ali',
+        loginManner: 'key',
+        key: ''
+      }
+    }
   }),
   actions: {},
   getters: {

@@ -54,6 +54,18 @@ ipcMain.handle('win:state', setWindowState)
 
 
 /**
+ * 重启 Nanote
+ */
+// 一些设置需要重新启动才可以生效
+export const relaunchApp = () => {
+  app.relaunch()
+  app.quit()
+  // 调用所有插件的 unmount 生命周期函数
+  // 保存 storage 数据
+}
+
+
+/**
  * 创建系统托盘
  */
 export const createTray = (mainWindow) => {
@@ -102,6 +114,7 @@ const createContextMenu = (state = true) => {
       click: () => setWindowState(null, {action: 'show'})
     })
   }
+  menu.push({label: '重新启动', click: () => relaunchApp()})
   menu.push({label: '退出程序', role: 'quit'})
   const contextMenu = Menu.buildFromTemplate(menu)
   tray.setContextMenu(contextMenu)

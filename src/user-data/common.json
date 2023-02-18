@@ -7,7 +7,7 @@
   "appearance": {
     "theme": {
       "darkMode": false,
-      "primaryColor": "orange",
+      "primaryColor": "geekblue",
       "backgroundImage": null
     },
     "language": "zhCN",
@@ -43,5 +43,14 @@
     "db": [
       "db0"
     ]
+  },
+  "sync": {
+    "enable": true,
+    "ssh": {
+      "loginManner": "key",
+      "hostname": "106.14.121.69",
+      "password": "123456"
+    },
+    "manner": "ssh"
   }
 }

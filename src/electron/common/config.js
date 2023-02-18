@@ -4,7 +4,8 @@ let rootConf = null
 
 const WINDOW_SIZE = {
   small: {width: 920, height: 600,},
-  medium: {width: 1020, height: 660}
+  medium: {width: 1020, height: 660},
+  large: {width: 1120, height: 720}
 }
 
 // 1-8 从低到高，值越大，级别越高

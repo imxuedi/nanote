@@ -1,27 +1,6 @@
 import {ipcMain, shell, app, BrowserWindow} from "electron"
 import {join} from "node:path";
-
-/**
- * name or path, only one need
- *
- * suffix 弥补 name 不能打开特定文件的不足, 如 name: userData, suffix: config.json
- * 则 path 为 userData/config.json
- *
- * name: 'home' | 'appData' | 'userData'
- * path format: C:\\dir1\\dir2\\abc.txt
- */
-const show_in_folder = async (e, {name, path, suffix}) => {
-  if (path) {
-    await shell.showItemInFolder(path)
-    return
-  }
-  const _path = app.getPath(name)
-  if (suffix) {
-    await shell.showItemInFolder(join(_path, suffix))
-  } else {
-    await shell.showItemInFolder(_path)
-  }
-}
+import {usePath} from "../utils/usePath";
 
 
 // --------------- 打开设置窗口 ------------------
@@ -65,17 +44,11 @@ const openSettingWindow = () => {
   }
 }
 
-// 一些设置需要重新启动才可以生效
-const reloadApp = () => {
-
-  // 调用所有插件的 unmount 生命周期函数
-  // 保存 storage 数据
-}
-
 
 // ------------------- IPC 接口 -------------------
 
 ipcMain.handle("open:item", (event, params) => {
+  console.log(params)
   const {type, args} = params
   if (type === 'plugin') {
     // open standalone window
@@ -85,10 +58,18 @@ ipcMain.handle("open:item", (event, params) => {
     } else {
       openSettingWindow()
     }
-  } else if (type === 'folder') {
-    // 只能打开特定的文件或文件夹
+  } else if (type === 'file' || type === 'folder') {
+    if (args === 'config') {
+      shell.showItemInFolder(usePath('config'))
+    }
+    // 用到时再添加更多
   } else if (type === 'browser') {
     shell.openExternal(args)
+  } else if (type === 'reload') {
+    // relaunchApp()
+    parentWindow.reload()
+  } else if (type === 'devtool' && isDev) {
+    parentWindow.webContents.toggleDevTools()
   }
 })
 

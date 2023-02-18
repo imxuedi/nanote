@@ -17,7 +17,7 @@ const safeDOM = {
   }
 }
 
-function useLoading() {
+function createLoading() {
   const css_link = document.createElement('link')
   css_link.rel = 'stylesheet'
   css_link.href = 'loading.css'
@@ -36,14 +36,16 @@ function useLoading() {
   }
 }
 
-const {appendLoading, removeLoading} = useLoading()
+export const useLoading = () => {
+  const {appendLoading, removeLoading} = createLoading()
+  document.addEventListener('DOMContentLoaded', () => {
+    appendLoading()
+    setTimeout(removeLoading, 10000)
+    window.onmessage = (ev) => {
+      ev.data.payload === 'removeLoading' && removeLoading()
+    }
+  })
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-  appendLoading()
-  setTimeout(removeLoading, 10000)
-  window.onmessage = (ev) => {
-    ev.data.payload === 'removeLoading' && removeLoading()
-  }
-})
 
 

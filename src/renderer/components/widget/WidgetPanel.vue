@@ -22,7 +22,7 @@ const context = ref()
 
 const setCanvasSize = () => {
   let container = document.querySelector('#canvas-container')
-  console.log(container)
+  // console.log(container)
   let {clientHeight, clientWidth} = container
   context.value.height = clientHeight
   context.value.width = clientWidth
