@@ -3,10 +3,10 @@
     <template v-if="item.type === 'group'">
       <h3>{{ item.label }}</h3>
       <template v-for="x in item.children" :key="x.label">
-        <common-setting :data="x"></common-setting>
+        <common-setting :data="x"/>
       </template>
     </template>
-    <common-setting :data="item" v-else></common-setting>
+    <common-setting :data="item" v-else/>
   </div>
 </template>
 
@@ -52,7 +52,10 @@ const settings = computed(() => {
             {label: '小', key: 'small'},
             {label: '中', key: 'medium'},
             {label: '大', key: 'large'}
-          ]
+          ],
+          callback: (size) => {
+            IPC_API.setWindowState({action: 'size', options: size})
+          }
         }
       ]
     },

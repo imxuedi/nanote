@@ -135,8 +135,12 @@ watch(props, () => myValue.value = props.data.value)
 
 const handleValueChange = (value) => {
   useLogger.purple(props.data.path, " ----> ", value)
-  console.log(myValue.value)
   IPC_API.saveLocalData({path: props.data.path, value})
+
+  // 执行回调函数（原来为调整大小而专门设置的）
+  if (props.data.callback) {
+    props.data.callback(value)
+  }
 }
 
 const useColor = computed(() => {

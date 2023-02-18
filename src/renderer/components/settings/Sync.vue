@@ -3,10 +3,10 @@
     <template v-if="item.type === 'group'">
       <h3>{{ item.label }}</h3>
       <template v-for="x in item.children" :key="x.label">
-        <common-setting :data="x"></common-setting>
+        <common-setting :data="x"/>
       </template>
     </template>
-    <common-setting :data="item" v-else></common-setting>
+    <common-setting :data="item" v-else/>
   </div>
 </template>
 

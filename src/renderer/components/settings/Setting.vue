@@ -22,9 +22,11 @@
           </div>
         </n-layout-sider>
         <n-layout-content>
-          <div class="setting-content">
-            <component :is="currentComponent"/>
-          </div>
+          <n-message-provider>
+            <div class="setting-content">
+              <component :is="currentComponent"/>
+            </div>
+          </n-message-provider>
         </n-layout-content>
       </n-layout>
     </n-layout>
@@ -33,9 +35,10 @@
 
 <script setup>
 import {computed, ref} from "vue";
-import {NLayout, NLayoutHeader, NLayoutContent} from "naive-ui";
+import {NLayout, NLayoutHeader, NLayoutContent, NMessageProvider} from "naive-ui";
 import Base from "./Base.vue";
 import Sync from "./Sync.vue";
+import About from './About.vue'
 import {useColorStore} from "@/pinia/ColorStore";
 import {useLogger} from "@/hooks/useLogger";
 
@@ -44,7 +47,8 @@ const currentTab = ref("base")
 const currentComponent = computed(() => {
   return {
     sync: Sync,
-    base: Base
+    base: Base,
+    about: About
   }[currentTab.value]
 })
 
@@ -80,7 +84,7 @@ const settingItems = ref([
   //   ]
   // },
   // {label: '备份与恢复', key: 'backup'},
-  // {label: '关于', key: 'about'},
+  {label: '关于', key: 'about'},
 ])
 
 const changeTab = (e) => {
