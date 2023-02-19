@@ -9,7 +9,7 @@ Yes, it's not a plugin or a collection of plugins, it's a container.
 leaving no brains to cut the picture, and it will be available in a short time.
 > 
 > Nanote 仍在开发中，但结构已经定型，就剩下无脑切图了，过不了多久就上线。
-> [🎉 查看最新进展](./TODO.md)
+> [🎉 查看最新进展](./TODO.md)，也可以查看 [🎉 模型图](./docs/think.md)
 
 ## Introduction
 
