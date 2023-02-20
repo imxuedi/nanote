@@ -7,7 +7,7 @@
   "appearance": {
     "theme": {
       "darkMode": false,
-      "primaryColor": "volcano",
+      "primaryColor": "blue",
       "backgroundImage": null
     },
     "language": "zhCN",
@@ -19,7 +19,7 @@
   },
   "plugins": {
     "nanote-todo": {
-      "icon": "static/icon.png",
+      "icon": "resources/icon.png",
       "main": {
         "entry": "index.html",
         "fixed": true

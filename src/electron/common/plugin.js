@@ -1,6 +1,6 @@
 import {app, ipcMain} from 'electron'
 import {join} from "node:path"
-import {saveData, takeData} from "./storage";
+import {saveData, saveSpecialData, takeData, takeSpecialData} from "./storage";
 import Koa from 'koa'
 import serve from 'koa-static'
 import fs from 'fs'
@@ -10,7 +10,7 @@ const fm = require('front-matter')
 
 let manifestCache = {}
 let pluginPath = ''
-
+let pluginDB = {}
 
 // ----------------- 静态文件服务器 ------------------
 // 插件的访问都是基于 http 的，所以配置静态文件服务器
@@ -49,13 +49,16 @@ export const initKoaApp = () => {
 export const loadPluginScript = () => {
   const plugins = takeData({path: "plugins"})
   for (let pluginName in plugins) {
+    // --------------- 附加一段逻辑 --------------
+    // 缓存插件的数据库标号
+    pluginDB[pluginName] = 'db' + plugins[pluginName].db ?? 'db0'
+    //------------------------------------------
     if (plugins[pluginName].enable) {
       // 加载对应的 node 文件（如果有）
       console.log(`load plugin [${pluginName}] scripts`)
     }
   }
 }
-
 
 // ----------------- 解析 manifest 并缓存 ------------------
 // 使用 snarkdown 解析 markdown，front-matter 解析 front matter
@@ -141,7 +144,7 @@ async function toggleFixPluginWidget() {
 /**
  * 保存插件状态（大小、位置）
  */
-async function savePluginState({x, y, size}) {
+async function saveWidgetState({x, y, size}) {
   let widget = takeData({path: `plugins.${name}.widget`})
   if (!widget) return
   await saveData({
@@ -150,28 +153,39 @@ async function savePluginState({x, y, size}) {
 }
 
 function savePluginData(params) {
-
+  const {name, path, value} = params
+  if (!pluginDB.hasOwnProperty(name)) {
+    console.log('[Nanote-Plugin] ------ ', name, 'is invalid')
+    return null
+  }
+  return saveSpecialData({path, db: pluginDB[name], value, appName: name})
 }
 
 function takePluginData(params) {
-
+  const {name, path} = params
+  if (!pluginDB.hasOwnProperty(name)) {
+    console.log('[Nanote-Plugin] ------ ', name, 'is invalid')
+    return null
+  }
+  return takeSpecialData({path, db: pluginDB[name], appName: name})
 }
 
-function takePluginState(params) {
+function takeWidgetState(params) {
 
 }
 
 const handler = {
-  'toggle:add': toggleAddPlugin,
-  'toggle:enable': toggleEnablePlugin,
-  'toggle:plugin-fixed': toggleFixPlugin,
-  'toggle:widget-fixed': toggleFixPluginWidget,
-  'save:state': savePluginState,
+  // 'toggle:add': toggleAddPlugin,
+  // 'toggle:enable': toggleEnablePlugin,
+  // 'toggle:plugin-fixed': toggleFixPlugin,
+  // 'toggle:widget-fixed': toggleFixPluginWidget,
+  // 'save:state': saveSpecialData,
+  'take:data': takePluginData,
   'save:data': savePluginData,
   'take:manifest': getManifestCache
 }
 
-ipcMain.handle('plugin', (e, {command, params}) => {
-  return handler[command](params)
+ipcMain.handle('plugin', (e, {command, args}) => {
+  return handler[command](args)
 })
 

@@ -86,10 +86,18 @@ export const saveData = async (e, params) => {
  * params: object
  * { db: string, path: string, value: any }
  */
-export const saveSpecialData = (e, params) => {
-  const {db, path, value} = params
+export const saveSpecialData = async (e, params) => {
+  params ??= e
+  const {db, path, value, appName} = params
   if (store.hasOwnProperty(db)) {
-    store[db].set(path, value)
+    if (path === 'root') {
+      store[db].chain.set(appName, value).value()
+      await store[db].write()
+      return 'ok'
+    }
+    store[db].chain.set(`${appName}.${path}`, value).value()
+    await store[db].write()
+    return 'ok'
   }
 }
 
@@ -99,26 +107,35 @@ export const saveSpecialData = (e, params) => {
  * { db: string, path: string, excludes: array<string> }
  */
 export const takeSpecialData = (e, params) => {
-  const {db, path, excludes = []} = params
-  console.log({takeSpecialData: params})
-  if (!store.hasOwnProperty(db)) return null
-  if (!excludes.length) {
-    return store[db].get(path)
+  params ??= e
+  const {db, path, appName} = params
+  if (store.hasOwnProperty(db)) {
+    if (path === 'root') {
+      return store[db].chain.get(appName).value()
+    }
+    return store[db].chain.get(`${appName}.${path}`).value()
   }
-  const res = store[db].get(path)
-  if (Array.isArray(res)) {
-    return res.map(item => {
-      if (!item) return null
-      excludes.forEach(name => {
-        delete item[name]
-      })
-      return item
-    })
-  }
-  excludes.forEach(name => {
-    delete res[name]
-  })
-  return res
+  return null
+  // const {db, path, excludes = []} = params
+  // console.log({takeSpecialData: params})
+  // if (!store.hasOwnProperty(db)) return null
+  // if (!excludes.length) {
+  //   return store[db].get(path)
+  // }
+  // const res = store[db].get(path)
+  // if (Array.isArray(res)) {
+  //   return res.map(item => {
+  //     if (!item) return null
+  //     excludes.forEach(name => {
+  //       delete item[name]
+  //     })
+  //     return item
+  //   })
+  // }
+  // excludes.forEach(name => {
+  //   delete res[name]
+  // })
+  // return res
 }
 
 export const countSpecialSize = (e, params) => {

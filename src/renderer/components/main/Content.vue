@@ -2,8 +2,10 @@
   <div id="app-container" :style="colorStore.cssVariable">
     <widget-panel v-show="pluginStore.currentApp==='widget'"/>
     <template v-for="plugin of pluginStore.fixedPlugins" :key="plugin.name">
-      <div :id="plugin.name" v-show="pluginStore.currentApp === plugin.name"></div>
+      <div :id="plugin.name" v-show="pluginStore.currentApp === plugin.name" style="height: 100%"></div>
     </template>
+    <!--  未来开两个方向，研究 iframe 有没有更好的使用方式  -->
+    <!--    <iframe src="http://localhost:7465/nanote-todo/index.html" ></iframe>-->
   </div>
 </template>
 
@@ -49,8 +51,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 #app-container {
-  //height: 200px;
-  height: calc(98vh - 70px);
+  height: calc(100vh - 50px);
   overflow-y: auto;
   overflow-x: hidden;
 }

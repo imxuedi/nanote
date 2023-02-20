@@ -23,9 +23,24 @@ export const usePluginStore = defineStore('plugin', {
           name: appName,
           entry: `//localhost:7465/${appName}/${this.plugins[appName].main.entry}`,
           container: `#${appName}`, // 挂载具体容器 ID
-          props: {brand: 'qiankun'}
+          props: {
+            takeData: (appName, params) => {
+              return IPC_API.handlePlugin({
+                command: 'take:data', args: {name: appName, ...params}
+              })
+            },
+            saveData: (appName, params) => {
+              return IPC_API.handlePlugin({
+                command: 'save:data', args: {name: appName, ...params}
+              })
+            }
+          }
         }
-        this.loadedApps[appName] = loadMicroApp(app)
+        this.loadedApps[appName] = loadMicroApp(app, {
+          sandbox: {
+            experimentalStyleIsolation: true
+          }
+        })
       }
     },
     loadNanoteWidget(widgetName) {

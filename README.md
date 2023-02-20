@@ -16,6 +16,10 @@ leaving no brains to cut the picture, and it will be available in a short time.
 Nanote 是一个基于 `Electron` 构建的跨平台插件容器，你可以开发适合自己的任何插件，
 在 [qiankun](https://qiankun.umijs.org/) 的强大支撑下，你的技术栈不再受到限制。
 
+### 🍭 preview
+
+<img src="docs/static/preview.png" alt="preview" width="65%">
+
 ### ✨ Features
 
 - 因为 qiankun 本身就是技术栈无关的，所以它支持 vue、react、jquery 等很多前端框架来构建你自己的插件

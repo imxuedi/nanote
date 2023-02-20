@@ -47,9 +47,9 @@ onMounted(() => {
   //-webkit-app-region: drag;
 }
 
-.side-menu-bar, .right {
-  height: 98vh;
-}
+//.side-menu-bar, .right {
+//  height: calc(100vh - 10px);
+//}
 
 .right {
   width: calc(100% - 70px);
@@ -66,7 +66,9 @@ onMounted(() => {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   box-shadow: 0 2px 8px -2px #ddd;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
+  position: relative;
+  z-index: 1;
 }
 
 </style>

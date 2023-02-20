@@ -13,8 +13,12 @@ contextBridge.exposeInMainWorld('IPC_API', {
 
   saveLocalData: (params) => ipcRenderer.invoke('data:save', params),
   takeLocalData: (params) => ipcRenderer.invoke('data:take', params),
-  saveSpecialData: (params) => ipcRenderer.invoke('data:saveAt', params),
-  takeSpecialData: (params) => ipcRenderer.invoke('data:takeAt', params),
+
+  // 起名字真的困难我滴哥
+  handlePlugin: (params) => ipcRenderer.invoke('plugin', params),
+
+  // saveSpecialData: (params) => ipcRenderer.invoke('data:saveAt', params),
+  // takeSpecialData: (params) => ipcRenderer.invoke('data:takeAt', params),
   removeSpecialData: (params) => ipcRenderer.invoke('data:removeAt', params),
   countSpecialSize: (params) => ipcRenderer.invoke('data:countSizeAt', params),
 })

@@ -3,7 +3,7 @@ name: nanote-todo
 author: Nickel
 version: 0.0.1
 home: https://www.nanote.cn
-repo: https://github.com/imxuedi/nanote.git
+repo: https://github.com/imxuedi/nanote-todo.git
 icon: static/icon.png
 
 widget:
