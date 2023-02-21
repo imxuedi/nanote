@@ -21,7 +21,14 @@
 
 <img src="static/version-3.png" width="65%" alt="version3">
 
-### ⭐ 版本 4 `<future>`
+### 版本 4 `不再考虑，将跳过此版本`
 <img src="static/version-4.png" width="65%" alt="version4">
 
 `nanote-api` 在插件开发时可引入，打包时必须去除，运行时动态引入
+
+### ⭐ 版本 5 `<future>`
+
+考虑直接使用 `iframe` 而不是 `qiankun`，因为它原生的 JS、CSS 隔离机制是最好的，之前使用 `qiankun` 是因为安全问题，
+现在可以模仿类似机制，通过 `fetch` 方法获取它的资源引用，最后把 `nanote-api` 注入，创建虚拟环境并执行
+
+既创建了良好的隔离环境，又避免了接口被篡改，同时取到了 `qiankun` 和 `iframe` 的优点
