@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {loadMicroApp} from "qiankun";
 import {useLogger} from "../hooks/useLogger";
+import {IPC_API} from "@/hooks/useIPC";
 
 export const usePluginStore = defineStore('plugin', {
   state: () => ({

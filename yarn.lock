@@ -2127,10 +2127,10 @@ immutable@^4.0.0:
   resolved "https://registry.npmmirror.com/immutable/-/immutable-4.2.4.tgz#83260d50889526b4b531a5e293709a77f7c55a2a"
   integrity sha512-WDxL3Hheb1JkRN3sQkyujNlL/xRjAo3rJtaU5xeufUauG66JdMr32bLj4gF+vWl84DIA3Zxw7tiAjneYzRRw+w==
 
-import-html-entry@^1.14.1:
-  version "1.14.2"
-  resolved "https://registry.npmmirror.com/import-html-entry/-/import-html-entry-1.14.2.tgz#fea998d71bd023c28d1cba65f36819dd6e817a9a"
-  integrity sha512-w7BXfpoVNCiSdjUNxrYHrByCVTNfWILoX0vpBzdZ/UfJ/qhozJn+IEoMGVBHzJK5ith9s2KcpM+oPrJl4oLFMg==
+import-html-entry@^1.14.3:
+  version "1.14.3"
+  resolved "https://registry.npmmirror.com/import-html-entry/-/import-html-entry-1.14.3.tgz#6237cc689be3d5148956e8e6df691928499d47ce"
+  integrity sha512-bQOxi0vgebkDjYf510XiRgsRNZR3idBiBXAjJtzOzIO1ukSj+h/lIM3zx7poZiJVMMUuwjiEkYLlvmJNhKw85A==
   dependencies:
     "@babel/runtime" "^7.7.2"
 
@@ -3187,11 +3187,13 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-"qiankun@file:qiankun-lib":
-  version "2.9.2"
+qiankun@^2.10.3:
+  version "2.10.3"
+  resolved "https://registry.npmmirror.com/qiankun/-/qiankun-2.10.3.tgz#cefae73f60df0bb8d01d1c8679cc8e6488c6b7e0"
+  integrity sha512-NmpblZy7FBujKpwb6GoDVUi0sRnfJYrxfkQt55PHRWmLM/A1g/IMUGwUeCydff9imv+A1YRwt3+ZiCM48SqrOg==
   dependencies:
     "@babel/runtime" "^7.10.5"
-    import-html-entry "^1.14.1"
+    import-html-entry "^1.14.3"
     lodash "^4.17.11"
     single-spa "^5.9.2"
 

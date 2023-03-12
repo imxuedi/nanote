@@ -114,10 +114,11 @@
 
 <script setup>
 import {computed, ref, watch} from "vue";
+import {IPC_API} from "@/hooks/useIPC";
 import {
   NAlert, NRadioGroup, NButton,
   NSelect, NRadio, NCheckbox,
-  NInput, NColorPicker
+  NInput
 } from 'naive-ui'
 import {presetPalettes, presetDarkPalettes} from "@ant-design/colors";
 import {useColorStore} from "@/pinia/ColorStore";

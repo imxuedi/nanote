@@ -12,7 +12,7 @@
 
 <script setup>
 // ------ 写起来是真费力，用起来是真香 ------
-
+import {IPC_API} from "@/hooks/useIPC";
 import {computed} from "vue";
 import CommonSetting from "./CommonSetting.vue";
 import {useUserStore} from "@/pinia/UserStore";

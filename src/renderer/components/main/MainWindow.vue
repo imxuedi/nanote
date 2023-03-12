@@ -47,15 +47,6 @@ onMounted(() => {
   //-webkit-app-region: drag;
 }
 
-//.side-menu-bar, .right {
-//  height: calc(100vh - 10px);
-//}
-
-.right {
-  width: calc(100% - 70px);
-  background-color: #ffffff;
-}
-
 .top-search-bar {
   background-color: #ffffff;
   height: 50px;

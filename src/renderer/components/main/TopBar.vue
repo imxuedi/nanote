@@ -75,6 +75,7 @@
 <script setup>
 import {NButton, NSpace, NSwitch, NDropdown, NAutoComplete, NPopselect} from "naive-ui";
 import {computed, ref} from "vue";
+import {IPC_API} from "@/hooks/useIPC";
 
 // 动态搜索
 const searchValue = ref("")

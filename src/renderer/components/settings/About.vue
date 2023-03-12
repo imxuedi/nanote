@@ -9,10 +9,15 @@
       <n-tag @click="copyEmail" type="primary"> nanote@qq.com</n-tag>
     </p>
     <p> Nanote 开源免费使用，欢迎提交 Issue 和 PR</p>
+    <h3> 贡献和帮助 </h3>
+    <p>
+      需要广大爱心人士提供云主机，云数据库，云存储，以便为插件市场提供更好支持（软件内搜索，不用到处搜罗）
+    </p>
   </div>
 </template>
 
 <script setup>
+import {IPC_API} from "@/hooks/useIPC";
 import {NButton, NTag, useMessage} from "naive-ui";
 
 const openGithub = () => {

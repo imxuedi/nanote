@@ -1,11 +1,12 @@
 import {ipcRenderer, contextBridge} from 'electron'
-import {useLoading} from "./loading";
+import {useLoading} from "./loading"
 
+// 只有主窗口需要加载动画
 if (location.pathname === '/') {
   useLoading()
 }
 
-contextBridge.exposeInMainWorld('IPC_API', {
+const api = {
   // params: { action: 'minimize|close|top', options: '' }
   setWindowState: (params) => ipcRenderer.invoke('win:state', params),
   // params: { type: 'browser|file', args: 'url|location' }
@@ -21,4 +22,21 @@ contextBridge.exposeInMainWorld('IPC_API', {
   // takeSpecialData: (params) => ipcRenderer.invoke('data:takeAt', params),
   removeSpecialData: (params) => ipcRenderer.invoke('data:removeAt', params),
   countSpecialSize: (params) => ipcRenderer.invoke('data:countSizeAt', params),
+}
+
+const key = {
+  // 利用 Symbol 不可遍历的特性
+  value: Symbol('secret'),
+  visited: false
+}
+
+contextBridge.exposeInMainWorld('api', {
+  getKey() {
+    if (!key.visited) {
+      key.visited = true
+      return key.value;
+    }
+    return null
+  },
+  [key.value]: api
 })

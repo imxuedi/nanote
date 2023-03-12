@@ -35,6 +35,7 @@
 
 <script setup>
 import {computed, ref} from "vue";
+import {IPC_API} from "@/hooks/useIPC";
 import {NLayout, NLayoutHeader, NLayoutContent, NMessageProvider} from "naive-ui";
 import Base from "./Base.vue";
 import Sync from "./Sync.vue";

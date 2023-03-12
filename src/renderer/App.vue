@@ -18,6 +18,7 @@ import SettingContainer from "@/components/settings/Setting.vue";
 import {useUserStore} from "@/pinia/UserStore";
 import {usePalettes} from "@/hooks/useColor";
 import {useColorStore} from "@/pinia/ColorStore";
+import {IPC_API} from "@/hooks/useIPC";
 
 const userStore = useUserStore()
 const colorStore = useColorStore()
