@@ -1,32 +1,33 @@
 :root, body {
     padding: 0;
     margin: 0;
-    overflow-y: hidden;
 }
 
 #app {
     /*background-color: #ffffff;*/
-    /*border-radius: 5px;*/
-    /*margin: 5px;*/
-    box-shadow: 0 0 8px -3px #000;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    margin-right: 1px;
+    /* 滚动条影响右侧边框宽度 */
+    /*box-shadow: 0 0 8px -3px #000;*/
     /*-webkit-user-select: none;*/
 }
 
-::-webkit-scrollbar {
-    width: 10px;
-    background-color: #df6c69;
-    border-radius: 5px;
-}
+/*::-webkit-scrollbar {*/
+/*    width: 10px;*/
+/*    background-color: #df6c69;*/
+/*    border-radius: 5px;*/
+/*}*/
 
-::-webkit-scrollbar-track {
-    background-color: #f8e1e1;
-}
+/*::-webkit-scrollbar-track {*/
+/*    background-color: #f8e1e1;*/
+/*}*/
 
-::-webkit-scrollbar-thumb {
-    background-color: #eba3a1;
-    border-radius: 5px;
-}
+/*::-webkit-scrollbar-thumb {*/
+/*    background-color: #eba3a1;*/
+/*    border-radius: 5px;*/
+/*}*/
 
-::-webkit-scrollbar-thumb:hover {
-    background-color: #e48381;
-}
+/*::-webkit-scrollbar-thumb:hover {*/
+/*    background-color: #e48381;*/
+/*}*/

@@ -1,5 +1,5 @@
 <template>
-  <div id="app-container" :style="colorStore.cssVariable">
+  <div id="app-container">
     <widget-panel v-show="pluginStore.currentApp==='widget'"/>
     <template v-for="plugin of pluginStore.fixedPlugins" :key="plugin.name">
       <div :id="plugin.name" v-show="pluginStore.currentApp === plugin.name" style="height: 100%"></div>
@@ -12,14 +12,12 @@
 <script setup>
 import {onMounted, watchEffect} from "vue";
 import {useUserStore} from "../../pinia/UserStore";
-import {useColorStore} from "../../pinia/ColorStore";
 import {usePluginStore} from "../../pinia/PluginStore";
 import {useLogger} from "../../hooks/useLogger";
 import {handleQiankunError} from "../../hooks/useErrorHandler";
 import WidgetPanel from "../widget/WidgetPanel.vue";
 
 const pluginStore = usePluginStore()
-const colorStore = useColorStore()
 const userStore = useUserStore()
 
 // TODO 清除副作用，并且保存数据
@@ -50,30 +48,33 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+$radius: 10px;
+
 #app-container {
-  height: calc(100vh - 50px);
+  background: var(--content);
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  background-color: var(--BASE5);
-  border-radius: 5px;
+  display: none;
+  //width: 10px;
+  //background-color: var(--BASE5);
+  //border-radius: $radius;
 }
 
-::-webkit-scrollbar-track {
-  background-color: var(--BASE2);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--BASE3);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--BASE4);
-}
+//::-webkit-scrollbar-track {
+//  background-color: var(--BASE2);
+//  border-radius: $radius;
+//}
+//
+//::-webkit-scrollbar-thumb {
+//  background-color: var(--BASE3);
+//  border-radius: $radius;
+//}
+//
+//::-webkit-scrollbar-thumb:hover {
+//  background-color: var(--BASE4);
+//}
 
 </style>

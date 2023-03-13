@@ -1,31 +1,33 @@
 <template>
-  <n-layout has-sider :style="{borderRadius: '5px', ...colorStore.cssVariable}">
-    <n-layout-sider class="side-menu-bar">
-      <side-bar/>
-    </n-layout-sider>
-    <n-layout>
-      <n-layout-header class="top-search-bar">
-        <top-bar/>
-      </n-layout-header>
-      <n-layout-content>
-        <content/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout>
+  <!--  <n-layout has-sider :style="{borderRadius: '10px'}">-->
+  <!--    <n-layout-sider class="side-menu-bar">-->
+  <!--      <side-bar/>-->
+  <!--    </n-layout-sider>-->
+  <!--    <n-layout>-->
+  <!--      <n-layout-header class="top-search-bar">-->
+  <!--        <top-bar/>-->
+  <!--      </n-layout-header>-->
+  <!--      <n-layout-content>-->
+  <!--        <content/>-->
+  <!--      </n-layout-content>-->
+  <!--    </n-layout>-->
+  <!--  </n-layout>-->
+
+  <div class="container">
+    <side-bar class="side-menu-bar"/>
+    <div class="right">
+      <top-bar class="top-search-bar"/>
+      <content class="content"/>
+    </div>
+  </div>
 </template>
 
 <script setup>
-
-import {NLayout, NLayoutHeader, NLayoutContent} from "naive-ui";
-import {onMounted} from "vue";
-
-import TopBar from "./TopBar.vue";
-import SideBar from "./SideBar.vue";
-import Content from "./Content.vue";
-import {useColorStore} from "../../pinia/ColorStore";
-
-const colorStore = useColorStore()
-
+import {onMounted} from "vue"
+import {NLayout, NLayoutHeader, NLayoutContent} from "naive-ui"
+import TopBar from "./TopBar.vue"
+import SideBar from "./SideBar.vue"
+import Content from "./Content.vue"
 
 // 清除加载动画
 onMounted(() => {
@@ -37,29 +39,45 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+$sidebar-width: 70px;
+$top-height: 50px;
+$radius: 8px;
+
+.container {
+  border-radius: $radius + 2px;
+  height: calc(100vh - 4px);
+}
 
 .side-menu-bar {
-  box-shadow: inset -2px 0 8px -2px #ddd;
-  width: 70px;
+  width: $sidebar-width;
+  float: left;
+  color: var(--BASE7);
+  background-color: var(--background);
   -webkit-user-select: none;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  //-webkit-app-region: drag;
+  border-top-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+}
+
+.right {
+  margin-left: $sidebar-width;
+  width: calc(100% - 70px);
+  border-bottom-right-radius: $radius;
+}
+
+.side-menu-bar, .right {
+  height: 100%;
+}
+
+.content {
+  background: var(--content);
+  height: calc(100% - 50px);
+  border-bottom-right-radius: $radius;
 }
 
 .top-search-bar {
-  background-color: #ffffff;
-  height: 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: $top-height;
   -webkit-app-region: drag;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  box-shadow: 0 2px 8px -2px #ddd;
-  //margin-bottom: 5px;
-  position: relative;
-  z-index: 1;
+  border-top-right-radius: $radius;
 }
 
 </style>

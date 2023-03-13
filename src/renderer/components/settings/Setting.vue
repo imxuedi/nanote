@@ -1,6 +1,6 @@
 <template>
   <n-dialog-provider>
-    <n-layout :style="{...colorStore.cssVariable}">
+    <n-layout>
       <n-layout-header>
         <div class="setting-header">
           <span>&emsp;⚙ </span>
@@ -40,57 +40,36 @@ import {NLayout, NLayoutHeader, NLayoutContent, NMessageProvider} from "naive-ui
 import Base from "./Base.vue";
 import Sync from "./Sync.vue";
 import About from './About.vue'
-import {useColorStore} from "@/pinia/ColorStore";
-import {useLogger} from "@/hooks/useLogger";
+import Extension from "./Extension.vue";
 
-
+// Tab 切换
+const settingItems = ref([
+  {label: '通用设置', key: 'base'},
+  {label: '数据同步', key: 'sync'},
+  // {label: '备份与恢复', key: 'backup'},
+  {label: '插件管理', key: 'extension'},
+  {label: '关于', key: 'about'},
+])
 const currentTab = ref("base")
+
 const currentComponent = computed(() => {
   return {
     sync: Sync,
     base: Base,
-    about: About
+    about: About,
+    extension: Extension
   }[currentTab.value]
 })
-
-const colorStore = useColorStore()
-
-
-const closeWindow = () => {
-  // relaunchApp.create({
-  //   content: "需要重启 Nanote 来使更改生效",
-  //   closable: false,
-  //   closeOnEsc: false,
-  //   maskClosable: false,
-  //   positiveText: '可以',
-  //   negativeText: '不要',
-  //   onNegativeClick: () => {
-  //     IPC_API.openItem({type: 'setting', args: 'close'})
-  //   },
-  //   onPositiveClick: () => {
-  //   }
-  // })
-  IPC_API.openItem({type: 'setting', args: 'close'})
-  IPC_API.openItem({type: 'reload'})
-}
-
-
-const settingItems = ref([
-  {label: '通用设置', key: 'base'},
-  {label: '数据同步', key: 'sync'},
-  // {
-  //   label: '插件设置', key: 'plugins', children: [
-  //     {label: 'nanote-bookmark', key: 'nanote-bookmark'},
-  //     {label: 'nanote-todo', key: 'nanote-todo'}
-  //   ]
-  // },
-  // {label: '备份与恢复', key: 'backup'},
-  {label: '关于', key: 'about'},
-])
 
 const changeTab = (e) => {
   let li = e.composedPath().find(li => li.tagName === 'LI')
   li && (currentTab.value = li.id)
+}
+
+// 窗口关闭刷新主界面
+const closeWindow = () => {
+  IPC_API.openItem({type: 'setting', args: 'close'})
+  IPC_API.openItem({type: 'reload'})
 }
 
 </script>
@@ -114,6 +93,7 @@ const changeTab = (e) => {
   height: calc(100vh - 55px);
   font-size: 13px;
   -webkit-user-select: none;
+  background: var(--content);
 }
 
 .setting-content {

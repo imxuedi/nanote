@@ -1,12 +1,12 @@
 import {app, BrowserWindow} from "electron";
 import {join} from "node:path"
 import './common/optimize' // set isDev
+// import './common/env'
 import {initStorage} from "./common/storage";
 import {initConfig, getWindowSize} from './common/config'
 import {initAction, createTray} from './common/action'
 import {initKoaApp, loadPluginScript, createManifestCache} from "./common/plugin";
 import {initSettingWindow} from "./common/open-item";
-
 /**
  * 一些思考：为什么 win 不放在 global 中使用，这样不是更方便吗？
  *

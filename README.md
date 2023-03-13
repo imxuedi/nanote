@@ -1,13 +1,13 @@
 # Nanote
 
-A plugin container that is a little brain-intensive to develop. 
+A plugin container that is a little brain-intensive to develop.
 Yes, it's not a plugin or a collection of plugins, it's a container.
 
 一个开发起来有点费脑子的插件容器。是的，它不是插件或插件集合，是个容器。
 
-> 👏 Nanote is still under development, but the structure has been finalized, 
-leaving no brains to cut the picture, and it will be available in a short time.
-> 
+> 👏 Nanote is still under development, but the structure has been finalized,
+> leaving no brains to cut the picture, and it will be available in a short time.
+>
 > Nanote 仍在开发中，但结构已经定型，就剩下无脑切图了，过不了多久就上线。
 > [🎉 查看最新进展](./TODO.md)，也可以查看 [🎉 模型图](./docs/think.md)
 
@@ -18,7 +18,12 @@ Nanote 是一个基于 `Electron` 构建的跨平台插件容器，你可以开�
 
 ### 🍭 preview
 
-<img src="docs/static/preview.png" alt="preview" width="65%">
+<p>
+<img src="docs/static/preview.png" alt="preview-light" width="65%">
+</p>
+<p>
+<img src="docs/static/darkmode.png" alt="preview-dark" width="65%">
+</p>
 
 ### ✨ Features
 
@@ -31,10 +36,10 @@ Nanote 是一个基于 `Electron` 构建的跨平台插件容器，你可以开�
 
 ### 📢 Note
 
-❗ It is risky to use plugins provided by others, 
-so it is best to use them after confirming that there is no "backdoor". 
-I only guarantee that **Nanote** itself and its affiliated plugins are non-aggressive. 
-I am deeply sorry for any loss caused by using other people's plugins, 
+❗ It is risky to use plugins provided by others,
+so it is best to use them after confirming that there is no "backdoor".
+I only guarantee that **Nanote** itself and its affiliated plugins are non-aggressive.
+I am deeply sorry for any loss caused by using other people's plugins,
 but I do not assume any responsibility.
 
 使用他人提供的插件有风险，所以最好在确认没有 **“后门”** 的情况下使用。

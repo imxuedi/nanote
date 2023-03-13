@@ -1,5 +1,5 @@
 let api = null
-export const useIPC = () => {
+export const useIPC = async () => {
   let key = window.api.getKey()
   api = window.api[key]
   if (!api) throw new Error('invalid IPC_API in useIPC.js')

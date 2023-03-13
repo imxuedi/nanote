@@ -115,20 +115,13 @@
 <script setup>
 import {computed, ref, watch} from "vue";
 import {IPC_API} from "@/hooks/useIPC";
-import {
-  NAlert, NRadioGroup, NButton,
-  NSelect, NRadio, NCheckbox,
-  NInput
-} from 'naive-ui'
-import {presetPalettes, presetDarkPalettes} from "@ant-design/colors";
-import {useColorStore} from "@/pinia/ColorStore";
-import {useUserStore} from "@/pinia/UserStore";
-import {usePalettes} from "@/hooks/useColor";
+import {NAlert, NRadioGroup, NButton, NSelect, NRadio, NCheckbox, NInput} from 'naive-ui'
+import {presetPalettes} from "@ant-design/colors";
+import {useThemeStore} from "@/pinia/ThemeStore";
 import {useLogger} from "@/hooks/useLogger";
 
 const props = defineProps(['data'])
-const colorStore = useColorStore()
-const userStore = useUserStore()
+const themeStore = useThemeStore()
 const myValue = ref(props.data.value)
 
 // 传递用户数据
@@ -151,7 +144,7 @@ const useColor = computed(() => {
         return presetPalettes[name][5]
       }
     }
-    return 'var(--PRIMARY)'
+    return 'var(--primary)'
   }
 })
 
@@ -165,13 +158,7 @@ const changeThemeColor = (color) => {
   useLogger.purple(props.data.path, " ----> ", color)
   IPC_API
       .saveLocalData({path: props.data.path, value: color})
-      .then(() => {
-        userStore.appearance.theme.primaryColor = color
-        const darkMode = userStore.theme.darkMode
-        const colors = usePalettes(color, darkMode)
-        console.log({colors})
-        colorStore.$patch(colors)
-      })
+      .then(() => themeStore.patchColor(color))
 }
 
 

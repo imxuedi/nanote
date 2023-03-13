@@ -42,7 +42,7 @@
             </svg>
           </n-dropdown>
         </div>
-        <n-switch :round="false">
+        <n-switch :round="false" @update:value="toggleTheme" :value="themeStore.darkMode">
           <template #checked-icon>
             <svg height="20px" viewBox="0 0 1024 1024" class="exception">
               <use xlink:href="#dark-switch"></use>
@@ -58,7 +58,7 @@
     </div>
     <div class="action">
       <svg height="13px" viewBox="0 0 1024 1024" @click="setWindowState('top')"
-           :style="{backgroundColor: top ? 'var(--BASE2)': ''}"
+           :style="{backgroundColor: top ? 'var(--hover)': ''}"
       >
         <use xlink:href="#stay-top"></use>
       </svg>
@@ -76,6 +76,7 @@
 import {NButton, NSpace, NSwitch, NDropdown, NAutoComplete, NPopselect} from "naive-ui";
 import {computed, ref} from "vue";
 import {IPC_API} from "@/hooks/useIPC";
+import {useThemeStore} from '@/pinia/ThemeStore'
 
 // 动态搜索
 const searchValue = ref("")
@@ -119,6 +120,12 @@ const syncSettings = () => {
   isSync.value = !isSync.value
 }
 
+// 浅色、深色主题切换
+const themeStore = useThemeStore()
+const toggleTheme = (dark) => {
+  themeStore.patchColor(themeStore.color.ORIGIN, dark)
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -130,7 +137,8 @@ const syncSettings = () => {
   height: 100%;
   align-items: center;
   justify-items: center;
-  color: var(--PRIMARY);
+  color: var(--icon);
+  background: var(--background);
 
   .action {
     align-self: start;
@@ -143,7 +151,7 @@ const syncSettings = () => {
       border-radius: 2px;
 
       &:focus, &:hover {
-        background-color: var(--BASE2);
+        background-color: var(--hover);
       }
 
       &:last-child:hover {
@@ -163,7 +171,7 @@ const syncSettings = () => {
       border-radius: 2px;
 
       &:focus, &:hover {
-        background-color: var(--BASE2);
+        background-color: var(--hover);
       }
     }
   }

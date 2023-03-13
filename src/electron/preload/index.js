@@ -15,8 +15,8 @@ const api = {
   saveLocalData: (params) => ipcRenderer.invoke('data:save', params),
   takeLocalData: (params) => ipcRenderer.invoke('data:take', params),
 
-  // 起名字真的困难我滴哥
   handlePlugin: (params) => ipcRenderer.invoke('plugin', params),
+  // env: () => ipcRenderer.invoke('env'),
 
   // saveSpecialData: (params) => ipcRenderer.invoke('data:saveAt', params),
   // takeSpecialData: (params) => ipcRenderer.invoke('data:takeAt', params),
@@ -40,3 +40,15 @@ contextBridge.exposeInMainWorld('api', {
   },
   [key.value]: api
 })
+
+
+// 加载 vue devtools
+// ipcRenderer.invoke('env').then(data => {
+//   if (data.isDev) {
+//     let script = document.createElement('script')
+//     script.src = "http://localhost:" + data.devtoolPort
+//     document.addEventListener('DOMContentLoaded', () => {
+//       document.head.append(script)
+//     })
+//   }
+// })

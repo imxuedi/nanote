@@ -28,3 +28,5 @@ export const useLogger = {
     log(chalk.bgHex('#f4d7f3').hex('#782175')(`  ${contentToString(content)}  `))
   }
 }
+
+window.logger = useLogger

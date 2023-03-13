@@ -1,27 +1,29 @@
 <template>
   <Icons/>
-  <n-config-provider :theme-overrides="themeOverrides">
-<!--    <n-dialog-provider>-->
-      <component :is="currentComponent()"/>
-<!--    </n-dialog-provider>-->
+  <n-config-provider
+      :theme="customTheme"
+      :theme-overrides="themeOverrides">
+    <component :is="currentComponent()" :style="themeStore.cssVariable"/>
   </n-config-provider>
 </template>
 
 <script setup>
 import {computed} from "vue";
-import {NConfigProvider} from "naive-ui";
-
+import {NConfigProvider, darkTheme} from "naive-ui";
 import Icons from "@/components/main/Icons.vue";
 import MainWindow from "@/components/main/MainWindow.vue";
 import SettingContainer from "@/components/settings/Setting.vue";
-
 import {useUserStore} from "@/pinia/UserStore";
-import {usePalettes} from "@/hooks/useColor";
-import {useColorStore} from "@/pinia/ColorStore";
+import {useThemeStore} from "@/pinia/ThemeStore";
 import {IPC_API} from "@/hooks/useIPC";
 
 const userStore = useUserStore()
-const colorStore = useColorStore()
+const themeStore = useThemeStore()
+
+const customTheme = computed(() => {
+  return themeStore.$state.darkMode ? darkTheme : undefined
+})
+
 
 /**
  * 默认主题覆盖
@@ -29,14 +31,14 @@ const colorStore = useColorStore()
  // * @type import('naive-ui').GlobalThemeOverrides
  */
 const themeOverrides = computed(() => {
+  console.log('1231231')
   return {
     common: {
-      primaryColor: colorStore.PRIMARY,
-      primaryColorHover: colorStore.BASE5,
-      primaryColorPressed: colorStore.BASE7,
-      primaryColorSuppl: colorStore.BASE5,
-      hoverColor: colorStore.BASE2
-    },
+      primaryColor: themeStore.color.primary,
+      primaryColorHover: themeStore.color.BASE5,
+      hoverColor: themeStore.color.focused,
+      primaryColorSuppl: themeStore.color.BASE8,
+    }
   }
 })
 
@@ -47,9 +49,8 @@ IPC_API
       userStore.$patch(data)
       const primaryColor = userStore.theme.primaryColor
       const darkMode = userStore.theme.darkMode
-      const colors = usePalettes(primaryColor, darkMode)
-      console.log({colors})
-      colorStore.$patch(colors)
+      themeStore.patchColor(primaryColor, darkMode)
+      themeStore.$patch({darkMode})
     })
 
 const currentComponent = () => {

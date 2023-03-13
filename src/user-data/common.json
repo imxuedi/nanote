@@ -6,8 +6,8 @@
   },
   "appearance": {
     "theme": {
-      "darkMode": false,
-      "primaryColor": "blue",
+      "darkMode": true,
+      "primaryColor": "#18a058",
       "backgroundImage": null
     },
     "language": "zhCN",
