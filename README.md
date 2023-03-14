@@ -19,10 +19,10 @@ Nanote 是一个基于 `Electron` 构建的跨平台插件容器，你可以开�
 ### 🍭 preview
 
 <p>
-<img src="docs/static/preview.png" alt="preview-light" width="65%">
+<img src="docs/static/light.png" alt="preview-light" width="65%">
 </p>
 <p>
-<img src="docs/static/darkmode.png" alt="preview-dark" width="65%">
+<img src="docs/static/dark.png" alt="preview-dark" width="65%">
 </p>
 
 ### ✨ Features

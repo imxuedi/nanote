@@ -19,7 +19,7 @@
   },
   "plugins": {
     "nanote-todo": {
-      "icon": "resources/icon.png",
+      "icon": "resources/icon.svg",
       "main": {
         "entry": "index.html",
         "fixed": true

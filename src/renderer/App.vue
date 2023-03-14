@@ -31,12 +31,11 @@ const customTheme = computed(() => {
  // * @type import('naive-ui').GlobalThemeOverrides
  */
 const themeOverrides = computed(() => {
-  console.log('1231231')
   return {
     common: {
       primaryColor: themeStore.color.primary,
       primaryColorHover: themeStore.color.BASE5,
-      hoverColor: themeStore.color.focused,
+      hoverColor: themeStore.darkMode ? themeStore.color.focused : themeStore.color.hover,
       primaryColorSuppl: themeStore.color.BASE8,
     }
   }

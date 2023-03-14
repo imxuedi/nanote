@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar">
+  <div class="top-bar" :style="topBarStyle">
     <div class="title">
       <span></span>
     </div>
@@ -120,11 +120,22 @@ const syncSettings = () => {
   isSync.value = !isSync.value
 }
 
-// 浅色、深色主题切换
+// 亮色、深色主题切换
 const themeStore = useThemeStore()
+const topBarStyle = computed(() => {
+  if (!themeStore.darkMode) {
+    let color = themeStore.hexToRgb(themeStore.color.primary)
+    return {
+      'border-bottom': `2px solid rgba(${color}0.1)`,
+      'background': '#fff'
+    }
+  }
+})
+
 const toggleTheme = (dark) => {
   themeStore.patchColor(themeStore.color.ORIGIN, dark)
 }
+
 
 </script>
 
@@ -134,7 +145,6 @@ const toggleTheme = (dark) => {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   width: 100%;
-  height: 100%;
   align-items: center;
   justify-items: center;
   color: var(--icon);

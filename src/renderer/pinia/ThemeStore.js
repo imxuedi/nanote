@@ -58,14 +58,28 @@ export const useThemeStore = defineStore('color', {
       } else {
         result = {
           ...result,
-          background: colors[1],
-          focused: colors[3],
-          hover: colors[2],
+          background: colors[0],
+          focused: colors[2],
+          hover: colors[1],
           content: '#fff',
-          icon: colors[4]
+          icon: colors[4],
         }
       }
       this.$patch({color: result, darkMode})
+    },
+    hexToRgb(hex) {
+      // 将 # 去除
+      hex = hex.replace("#", "");
+      // 如果是缩写形式则扩展为完整形式
+      if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+      // 将十六进制转为十进制
+      let r = parseInt(hex.substring(0, 2), 16);
+      let g = parseInt(hex.substring(2, 4), 16);
+      let b = parseInt(hex.substring(4, 6), 16);
+      // 返回 rgb 值
+      return `${r},${g},${b},`;
     }
   },
   getters: {
